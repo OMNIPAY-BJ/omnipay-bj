@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omnipay-Bénin | Fintech Africaine Mondiale</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0A1628;--navy2:#132240;--blue:#1A56DB;--green:#00C896;
+  --gold:#F4A726;--white:#fff;--gray:#8A9BB0;--light:#F0F4FF;
+  --red:#DC2626;--indigo:#4f46e5;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--navy);color:white;overflow-x:hidden}
+input,select,button,textarea{font-family:inherit;font-size:14px;outline:none}
+
+/* SCREENS */
+.screen{display:none}
+.screen.active{display:block}
+
+/* NAV */
+nav{background:rgba(10,22,40,0.97);backdrop-filter:blur(10px);padding:0 20px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,200,150,0.2);height:58px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:20px;font-weight:900;cursor:pointer}
+.logo span{color:var(--green)}
+.logo small{color:var(--gold);font-size:10px;margin-left:3px}
+.nav-links{display:flex;gap:6px;align-items:center}
+.lang-btn{background:rgba(255,255,255,0.08);border:none;color:var(--gray);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+.lang-btn.active{background:var(--green);color:white}
+.nav-btn{background:var(--blue);color:white;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px}
+
+/* TICKER */
+.ticker-wrap{background:var(--navy2);padding:7px 0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.05)}
+.ticker{display:flex;gap:40px;white-space:nowrap;animation:ticker 30s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker span{color:var(--gold);font-size:11px;font-weight:500}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#020B1A 0%,#0A1628 50%,#0D2B1A 100%);padding:60px 20px 50px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(0,200,150,0.06),transparent 60%),radial-gradient(circle at 70% 20%,rgba(26,86,219,0.08),transparent 50%)}
+.hero-badge{display:inline-block;background:rgba(244,167,38,0.15);color:var(--gold);padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:18px;border:1px solid rgba(244,167,38,0.3)}
+.hero h1{font-size:clamp(40px,8vw,72px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:10px}
+.hero h1 span{color:var(--green)}
+.hero-sub{color:rgba(255,255,255,0.65);font-size:clamp(14px,3vw,18px);margin-bottom:6px}
+.hero-sub2{color:var(--green);font-size:13px;font-weight:600;margin-bottom:32px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.btn-primary{background:linear-gradient(135deg,var(--green),#00A87E);color:white;padding:13px 28px;border-radius:10px;border:none;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-secondary{background:rgba(255,255,255,0.08);color:white;padding:13px 28px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);font-weight:600;font-size:14px;cursor:pointer}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#D4891A);color:var(--navy);padding:13px 28px;border-radius:10px;border:none;font-weight:700;font-size:14px;cursor:pointer}
+.btn-danger{background:var(--red);color:white;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:12px}
+
+/* CONVERTER */
+.converter{background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,150,0.25);border-radius:14px;padding:20px;max-width:460px;margin:0 auto}
+.conv-h{color:var(--gold);font-size:11px;font-weight:700;margin-bottom:14px;text-align:left}
+.conv-row{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
+.conv-input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white;padding:10px 12px;border-radius:8px;font-size:16px;font-weight:700;width:100%}
+.conv-select{background:var(--navy2);border:1px solid rgba(255,255,255,0.15);color:white;padding:10px 12px;border-radius:8px;font-size:13px;width:100%}
+.conv-select option{background:var(--navy2)}
+.conv-result{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);border-radius:8px;padding:10px;text-align:center;color:var(--green);font-size:20px;font-weight:900;font-family:monospace;margin-top:6px}
+.conv-note{color:var(--gray);font-size:11px;text-align:center;margin-top:6px}
+
+/* SECTIONS */
+.section{padding:44px 20px;max-width:1100px;margin:0 auto}
+.section-title{text-align:center;margin-bottom:6px}
+.section-title h2{font-size:clamp(20px,4vw,30px);font-weight:800}
+.section-title p{color:var(--gray);margin-top:5px;font-size:13px}
+.grid{display:grid;gap:12px;margin-top:24px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+
+/* CARDS */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px;transition:all .2s}
+.card:hover{border-color:rgba(0,200,150,0.3);background:rgba(0,200,150,0.04)}
+.card-icon{font-size:26px;margin-bottom:8px}
+.card h3{font-size:14px;font-weight:700;margin-bottom:5px}
+.card p{color:var(--gray);font-size:12px;line-height:1.5}
+
+/* SERVICE GRID */
+.service-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.service-item:hover{border-color:var(--green);transform:translateY(-2px)}
+.service-item .icon{font-size:22px;margin-bottom:6px}
+.service-item .name{font-size:11px;font-weight:700;color:white}
+.service-item .type{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* TAGS */
+.tag{display:inline-block;background:rgba(0,200,150,0.12);color:var(--green);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.tag-gold{background:rgba(244,167,38,0.12);color:var(--gold)}
+.tag-blue{background:rgba(26,86,219,0.15);color:#60A5FA}
+
+/* MODALS */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-box{background:var(--navy2);border:1px solid rgba(0,200,150,0.3);border-radius:16px;padding:24px;width:100%;max-width:400px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--gray);font-size:18px;cursor:pointer}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
+.form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:white;padding:9px 12px;border-radius:8px;font-size:13px}
+.form-group input:focus,.form-group select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,150,.1)}
+.form-group select option{background:var(--navy2)}
+.msg{padding:9px 12px;border-radius:8px;font-size:12px;margin-bottom:10px}
+.msg.success{background:rgba(0,200,150,0.15);color:var(--green);border:1px solid rgba(0,200,150,0.3)}
+.msg.error{background:rgba(220,38,38,0.15);color:#F87171;border:1px solid rgba(220,38,38,0.3)}
+
+/* PULSE */
+.pulse{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;margin-right:5px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}
+
+/* DIVIDER */
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:36px 0}
+
+/* ECOBANK BANNER */
+.ecobank-banner{background:linear-gradient(135deg,var(--navy2),#0D2B1A);border:1px solid rgba(0,200,150,0.3);border-radius:14px;padding:18px;margin-top:24px}
+.iban{font-family:monospace;color:var(--green);font-size:13px;word-break:break-all;margin:6px 0}
+
+/* DASHBOARD */
+.dash-hidden{display:none}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;border-top:3px solid var(--green)}
+.kpi-val{font-size:22px;font-weight:900;margin:5px 0}
+.kpi-label{font-size:10px;color:var(--gray)}
+
+/* TERMINAL */
+.terminal-app{display:flex;height:calc(100vh - 58px);overflow:hidden;background:#f0f2f5}
+.t-sidebar{width:200px;background:#1a1a2e;display:flex;flex-direction:column;flex-shrink:0}
+.t-logo{display:flex;align-items:center;gap:8px;padding:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.t-logo-text{font-size:15px;font-weight:700;color:#fff}
+.t-nav{flex:1;padding:8px;display:flex;flex-direction:column;gap:2px}
+.t-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 10px;border:none;background:transparent;color:rgba(255,255,255,.6);border-radius:8px;text-align:left;font-size:12px;cursor:pointer;transition:all .15s}
+.t-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+.t-btn.active{background:#4f46e5;color:#fff}
+.t-main{flex:1;display:flex;flex-direction:column;overflow:hidden;color:#1a1a2e}
+.t-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.t-title{font-size:14px;font-weight:600;color:#1a1a2e}
+.t-panel{display:none;flex:1;overflow-y:auto;padding:20px}
+.t-panel.active{display:block}
+
+/* TERMINAL STYLES */
+.t-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.t-stat{background:#fff;border-radius:10px;padding:16px;border:1px solid #e5e7eb}
+.t-stat-label{font-size:11px;color:#6b7280;margin-bottom:4px}
+.t-stat-value{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:3px}
+.t-stat-change{font-size:10px;color:#059669}
+.t-card{background:#fff;border-radius:10px;padding:16px;border:1px solid #e5e7eb;margin-bottom:14px}
+.t-card-title{font-size:13px;font-weight:600;color:#374151;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #f3f4f6}
+.t-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.t-form-group{margin-bottom:12px}
+.t-form-group label{display:block;font-size:11px;font-weight:500;color:#6b7280;margin-bottom:4px}
+.t-form-group input,.t-form-group select{width:100%;padding:8px 10px;border:1px solid #dde1e7;border-radius:7px;background:#fff;color:#1a1a2e;font-size:13px}
+.t-form-group input:focus,.t-form-group select:focus{border-color:#4f46e5;box-shadow:0 0 0 2px rgba(79,70,229,.1)}
+.t-btn-primary{width:100%;padding:10px;font-size:14px;font-weight:600;border-radius:8px;border:none;background:#4f46e5;color:#fff;cursor:pointer}
+.t-btn-secondary{padding:7px 14px;font-size:12px;font-weight:500;border-radius:7px;border:1.5px solid #d1d5db;background:#fff;color:#374151;cursor:pointer}
+.t-method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.t-m-tile{border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.t-m-tile:hover{border-color:#a5b4fc;background:#f5f3ff}
+.t-m-tile.selected{border-color:#4f46e5;background:#eef2ff}
+.t-m-icon{font-size:18px;margin-bottom:3px}
+.t-m-name{font-size:10px;font-weight:500;color:#374151}
+.t-crypto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.t-c-tile{border:1.5px solid #e5e7eb;border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.t-c-tile:hover{border-color:#f59e0b;background:#fffbeb}
+.t-c-tile.selected{border-color:#d97706;background:#fef3c7}
+.t-c-icon{font-size:20px;margin-bottom:3px}
+.t-c-name{font-size:10px;font-weight:600;color:#374151}
+.t-c-price{font-size:9px;color:#6b7280;margin-top:1px}
+.t-gift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.t-g-tile{border:1.5px solid #e5e7eb;border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;background:#fff}
+.t-g-tile:hover{border-color:#a5b4fc;background:#f5f3ff}
+.t-g-tile.selected{border-color:#4f46e5;background:#eef2ff}
+.t-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.t-badge-green{background:#d1fae5;color:#065f46}
+.t-badge-blue{background:#dbeafe;color:#1e40af}
+.t-badge-amber{background:#fef3c7;color:#92400e}
+.t-tx-table{width:100%;border-collapse:collapse;font-size:12px}
+.t-tx-table th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;background:#f9fafb;border-bottom:1px solid #e5e7eb}
+.t-tx-table td{padding:10px 12px;color:#374151;border-bottom:1px solid #f3f4f6}
+.t-tx-pos{color:#059669;font-weight:600}
+.t-tx-neg{color:#dc2626;font-weight:600}
+.t-tx-btc{color:#d97706;font-weight:600}
+.t-tx-ok{background:#d1fae5;color:#065f46;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500}
+.t-ticker-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:3px}
+.t-ticker-chip{background:#fff;border:1px solid #e5e7eb;border-radius:7px;padding:7px 12px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.t-tc-sym{font-size:11px;font-weight:700;color:#1a1a2e}
+.t-tc-price{font-size:11px;color:#374151}
+.t-tc-chg{font-size:10px}
+.t-tc-up{color:#059669}
+.t-tc-dn{color:#dc2626}
+.crypto-addr-box{background:#f8faff;border:1px solid #c7d2fe;border-radius:7px;padding:9px 12px;font-family:'Courier New',monospace;font-size:10px;color:#312e81;word-break:break-all;margin-bottom:7px}
+.link-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;padding:9px 12px;font-family:monospace;font-size:11px;color:#0369a1;word-break:break-all}
+.t-sub-banner{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:16px}
+.t-fee-table{display:flex;flex-direction:column;gap:5px}
+.t-fee-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 8px;background:#f9fafb;border-radius:5px}
+.t-fee-row span:last-child{font-weight:600;color:#4f46e5}
+.t-sec-line{font-size:10px;color:#059669;background:#d1fae5;padding:7px 10px;border-radius:7px;margin-bottom:12px}
+.t-check-item{font-size:12px;padding:6px 10px;border-radius:7px;color:#065f46;background:#f0fdf4;margin-bottom:5px}
+.t-setting-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:12px;color:#374151}
+.t-toggle-on{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;background:#d1fae5;color:#065f46}
+.t-amount-hero{background:linear-gradient(135deg,#4f46e5,#818cf8);border-radius:10px;padding:16px;text-align:center;margin-bottom:16px;color:#fff}
+.t-amount-label{font-size:11px;opacity:.8;margin-bottom:3px}
+.t-amount-big{font-size:32px;font-weight:700}
+.mini-tx-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f3f4f6}
+.mini-tx-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.mini-tx-icon.in{background:#d1fae5}
+.mini-tx-icon.out{background:#fee2e2}
+.mini-tx-icon.btc{background:#fef3c7}
+.mini-tx-info{flex:1}
+.mini-tx-label{font-size:11px;font-weight:500;color:#1a1a2e}
+.mini-tx-date{font-size:10px;color:#9ca3af}
+.mini-tx-amt{font-size:12px;font-weight:600}
+
+/* ABONNEMENT */
+.sub-card{background:linear-gradient(135deg,var(--navy2),#0D2B1A);border:1px solid rgba(244,167,38,0.4);border-radius:14px;padding:20px;margin-bottom:14px}
+
+/* FOOTER */
+footer{background:var(--navy2);border-top:1px solid rgba(255,255,255,0.06);padding:36px 20px;text-align:center}
+
+@media(max-width:700px){
+  .t-sidebar{width:54px}
+  .t-logo-text,.t-btn span:last-child{display:none}
+  .t-stats-grid{grid-template-columns:repeat(2,1fr)}
+  .t-grid-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showScreen('home')">Omni<span>pay</span><small>BÉNIN</small></div>
+  <div class="nav-links">
+    <button class="lang-btn active" onclick="setLang('fr',this)">FR</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('pt',this)">PT</button>
+    <button class="nav-btn" id="mainNavBtn" onclick="handleNavBtn()">Connexion</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>📊 1 EUR = 655.96 FCFA</span><span>📊 1 USD = 601.45 FCFA</span>
+    <span>📊 1 GBP = 761.20 FCFA</span><span>₿ BTC = 80,920 USD</span>
+    <span>💎 USDT = 1.00 USD</span><span>🥜 Cajou: 850 FCFA/kg</span>
+    <span>🌽 Maïs: 180 FCFA/kg</span><span>🫘 Soja: 320 FCFA/kg</span>
+    <span>💳 Commission Omnipay: 2.5%</span><span>🌍 omnipay-eu.com</span>
+    <span>📊 1 EUR = 655.96 FCFA</span><span>📊 1 USD = 601.45 FCFA</span>
+    <span>📊 1 GBP = 761.20 FCFA</span><span>₿ BTC = 80,920 USD</span>
+    <span>💎 USDT = 1.00 USD</span><span>🥜 Cajou: 850 FCFA/kg</span>
+    <span>🌽 Maïs: 180 FCFA/kg</span><span>🫘 Soja: 320 FCFA/kg</span>
+    <span>💳 Commission Omnipay: 2.5%</span><span>🌍 omnipay-eu.com</span>
+  </div>
+</div>
+
+<!-- SCREEN: HOME -->
+<div id="screen-home" class="screen active">
+  <!-- HERO -->
+  <div class="hero">
+    <div style="position:relative">
+      <div class="hero-badge">🌍 Bénin · Afrique · Europe · Monde</div>
+      <h1>Omni<span>pay</span></h1>
+      <p class="hero-sub" id="hero-sub">Une autre finance est possible.</p>
+      <p class="hero-sub2" id="hero-sub2">Honnête. Africaine. Mondiale. 🇧🇯</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="openModal('signupModal')">🚀 Créer mon compte</button>
+        <button class="btn-secondary" onclick="openModal('loginModal')">Connexion</button>
+      </div>
+      <div class="converter">
+        <p class="conv-h">⚡ CONVERTISSEUR EN DIRECT</p>
+        <div class="conv-row">
+          <input class="conv-input" type="number" id="convAmount" value="100000" oninput="convert()">
+          <select class="conv-select" id="convFrom" onchange="convert()">
+            <option>FCFA</option><option>EUR</option><option>USD</option>
+            <option>GBP</option><option>CAD</option><option>BTC</option><option>USDT</option>
+          </select>
+        </div>
+        <select class="conv-select" id="convTo" onchange="convert()" style="margin-bottom:8px">
+          <option>EUR</option><option>FCFA</option><option>USD</option>
+          <option>GBP</option><option>USDT</option><option>BTC</option>
+        </select>
+        <div class="conv-result" id="convResult">152.45 EUR</div>
+        <p class="conv-note">Commission Omnipay: 2.5% · Transparent & Honnête</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#080F1E">
+    <!-- TRANSFERTS -->
+    <div class="section">
+      <div class="section-title"><h2>💸 Transferts & Paiements</h2><p>Envoie et reçois partout dans le monde</p></div>
+      <div class="grid grid-4" style="margin-top:20px">
+        <div class="service-item"><div class="icon">📱</div><div class="name">MTN MoMo</div><div class="type">Mobile Money</div></div>
+        <div class="service-item"><div class="icon">📞</div><div class="name">Moov Money</div><div class="type">Mobile Money</div></div>
+        <div class="service-item"><div class="icon">🟠</div><div class="name">Orange Money</div><div class="type">Mobile Money</div></div>
+        <div class="service-item"><div class="icon">💵</div><div class="name">Western Union</div><div class="type">International</div></div>
+        <div class="service-item"><div class="icon">💰</div><div class="name">MoneyGram</div><div class="type">International</div></div>
+        <div class="service-item"><div class="icon">✈️</div><div class="name">RIA Money</div><div class="type">International</div></div>
+        <div class="service-item"><div class="icon">🔵</div><div class="name">PayPal</div><div class="type">En ligne</div></div>
+        <div class="service-item"><div class="icon">📲</div><div class="name">Remitly</div><div class="type">International</div></div>
+        <div class="service-item"><div class="icon">🏦</div><div class="name">Wise</div><div class="type">Banque en ligne</div></div>
+        <div class="service-item"><div class="icon">🔴</div><div class="name">Revolut</div><div class="type">Banque en ligne</div></div>
+        <div class="service-item"><div class="icon">⚡</div><div class="name">Stripe</div><div class="type">Paiement pro</div></div>
+        <div class="service-item"><div class="icon">🏦</div><div class="name">Ecobank</div><div class="type">Bénin · Afrique</div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- CRYPTO -->
+    <div class="section">
+      <div class="section-title"><h2>₿ Crypto & Actifs Numériques</h2><p>Achetez, vendez et échangez vos cryptomonnaies</p></div>
+      <div class="grid grid-4" style="margin-top:20px">
+        <div class="service-item"><div class="icon">⭐</div><div class="name">Binance</div><div class="type">BTC · ETH · USDT</div></div>
+        <div class="service-item"><div class="icon">📈</div><div class="name">Bybit</div><div class="type">Trading · Futures</div></div>
+        <div class="service-item"><div class="icon">💎</div><div class="name">USDT</div><div class="type">Stablecoin</div></div>
+        <div class="service-item"><div class="icon">🟠</div><div class="name">Bitcoin</div><div class="type">BTC</div></div>
+        <div class="service-item"><div class="icon">🔷</div><div class="name">Ethereum</div><div class="type">ETH</div></div>
+        <div class="service-item"><div class="icon">🌊</div><div class="name">XRP</div><div class="type">Ripple</div></div>
+        <div class="service-item"><div class="icon">📊</div><div class="name">Deriv</div><div class="type">Trading</div></div>
+        <div class="service-item"><div class="icon">🔗</div><div class="name">TRC20</div><div class="type">USDT réseau</div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- CARTES CADEAUX -->
+    <div class="section">
+      <div class="section-title"><h2>🎁 Cartes Cadeaux</h2><p>Achat, vente et échange de cartes cadeaux internationales</p></div>
+      <div class="grid grid-4" style="margin-top:20px">
+        <div class="service-item"><div class="icon">💳</div><div class="name">Transcash</div><div class="type">France</div></div>
+        <div class="service-item"><div class="icon">💜</div><div class="name">PCS</div><div class="type">Prépayée</div></div>
+        <div class="service-item"><div class="icon">🎮</div><div class="name">Steam</div><div class="type">Gaming</div></div>
+        <div class="service-item"><div class="icon">🍎</div><div class="name">iTunes</div><div class="type">Apple</div></div>
+        <div class="service-item"><div class="icon">🔵</div><div class="name">Neosurf</div><div class="type">Prépayée</div></div>
+        <div class="service-item"><div class="icon">🎯</div><div class="name">Amazon</div><div class="type">E-commerce</div></div>
+        <div class="service-item"><div class="icon">🎵</div><div class="name">Google Play</div><div class="type">Android</div></div>
+        <div class="service-item"><div class="icon">🎪</div><div class="name">Xbox</div><div class="type">Gaming</div></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- AGRI -->
+    <div class="section">
+      <div class="section-title"><h2>🌱 Marché Agricole International</h2><p>De l'Afrique au monde entier</p></div>
+      <div class="grid grid-3" style="margin-top:20px">
+        <div class="card"><div class="card-icon">🥜</div><h3>Cajou Premium</h3><p>Bénin · 850 FCFA/kg · 5T dispo</p><br><span class="tag">Export Europe</span></div>
+        <div class="card"><div class="card-icon">🫘</div><h3>Soja Bio</h3><p>Bénin · 320 FCFA/kg · 8T dispo</p><br><span class="tag">Export Asie</span></div>
+        <div class="card"><div class="card-icon">🌽</div><h3>Maïs Séché</h3><p>Bénin · 180 FCFA/kg · 12T dispo</p><br><span class="tag">Export USA</span></div>
+        <div class="card"><div class="card-icon">🍠</div><h3>Igname</h3><p>Bénin · 450 FCFA/kg · 6T dispo</p><br><span class="tag">Export Europe</span></div>
+        <div class="card"><div class="card-icon">🍫</div><h3>Cacao</h3><p>Côte d'Ivoire · 1200 FCFA/kg</p><br><span class="tag">Export Monde</span></div>
+        <div class="card"><div class="card-icon">🌾</div><h3>Sésame</h3><p>Burkina · 950 FCFA/kg · 4T</p><br><span class="tag">Export Asie</span></div>
+      </div>
+      <div class="ecobank-banner">
+        <p style="color:var(--gold);font-size:11px;font-weight:700"><span class="pulse"></span>COMPTE ECOBANK ETS OMNIPAY — VÉRIFIÉ</p>
+        <p class="iban">BJ66BJ0620102211245994000105</p>
+        <p style="color:var(--gray);font-size:11px">Abomey-Calavi, Bénin · IFU: 0202671161075 · RCCM: RB/ABC/26 A 142268</p>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- SERVICES -->
+    <div class="section">
+      <div class="section-title"><h2>💼 Services Financiers</h2></div>
+      <div class="grid grid-2" style="margin-top:20px">
+        <div class="card"><div class="card-icon">💳</div><h3>Carte Virtuelle Omnipay</h3><p>Payez partout dans le monde. QR Code intégré. Acceptée sur tous les sites.</p><br><span class="tag-gold tag">10€/mois</span></div>
+        <div class="card"><div class="card-icon">🌱</div><h3>Prêts Agricoles</h3><p>Financement de vos projets. Taux: 3% mensuel. Remboursement après récolte.</p><br><span class="tag">3% mensuel</span></div>
+        <div class="card"><div class="card-icon">💰</div><h3>Épargne Rémunérée</h3><p>Faites fructifier votre argent. 8% annuel. Retraits à tout moment.</p><br><span class="tag">8% annuel</span></div>
+        <div class="card"><div class="card-icon">🤝</div><h3>Programme Parrainage</h3><p>Parrainez vos proches et gagnez des commissions sur chaque client recruté.</p><br><span class="tag-gold tag">€25/client</span></div>
+        <div class="card"><div class="card-icon">📱</div><h3>Abonnements digitaux</h3><p>Netflix, Amazon Prime, Google Play, Spotify — rechargez facilement via Omnipay.</p><br><span class="tag-blue tag">E-commerce</span></div>
+        <div class="card"><div class="card-icon">📊</div><h3>Terminal Pro</h3><p>Tableau de bord complet pour commerçants. Encaissement multi-devises en temps réel.</p><br><span class="tag">Pro</span></div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="logo" style="font-size:22px">Omni<span style="color:var(--green)">pay</span><small style="color:var(--gold);font-size:10px;margin-left:3px">BÉNIN</small></div>
+    <p style="color:var(--gray);font-size:12px;margin-top:10px;line-height:1.8">
+      IFU: 0202671161075 · RCCM: RB/ABC/26 A 142268<br>
+      Îlot 160, Kpossidja, Abomey-Calavi, Bénin<br>
+      📞 +229 01 91 46 72 83 · 📧 regisagnikpe2002@gmail.com<br>
+      <span style="color:rgba(255,255,255,0.3)">© 2026 ETS OMNIPAY · Fondateur: Agnikpe Régis Jean de Dieu Olatounde</span>
+    </p>
+  </footer>
+</div>
+
+<!-- SCREEN: CLIENT DASHBOARD -->
+<div id="screen-client" class="screen">
+  <div style="padding:18px 16px;max-width:700px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div><h2 id="clientWelcome" style="font-weight:800;font-size:20px">Bienvenue 👋</h2><p style="color:var(--gray);font-size:11px">Compte Omnipay actif</p></div>
+      <button class="btn-danger" onclick="logout()">Déconnexion</button>
+    </div>
+    <div style="background:linear-gradient(135deg,var(--navy2),#0D2B1A);border:1px solid rgba(0,200,150,0.3);border-radius:14px;padding:16px;margin-bottom:14px">
+      <p style="color:var(--gold);font-size:10px;font-weight:700">🏦 ECOBANK ETS OMNIPAY</p>
+      <p style="font-family:monospace;color:var(--green);font-size:13px;margin:5px 0">BJ66BJ0620102211245994000105</p>
+      <p style="color:var(--gray);font-size:10px">Fondateur: Agnikpe Régis · Abomey-Calavi</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="kpi"><div class="kpi-label">SOLDE</div><div class="kpi-val" style="color:var(--green);font-size:18px">0 FCFA</div></div>
+      <div class="kpi" style="border-color:var(--gold)"><div class="kpi-label">COMMISSIONS</div><div class="kpi-val" style="color:var(--gold);font-size:18px">€0</div></div>
+    </div>
+    <!-- ABONNEMENT -->
+    <div class="sub-card">
+      <p style="color:var(--gold);font-weight:700;font-size:13px;margin-bottom:10px">💳 Carte Virtuelle Omnipay</p>
+      <p style="color:rgba(255,255,255,0.7);font-size:12px;margin-bottom:12px">Accédez à votre carte virtuelle pour payer partout dans le monde</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn-primary" onclick="alert('Abonnement mensuel: 10€/mois\nContactez: +229 01 91 46 72 83')">10€/mois</button>
+        <button class="btn-gold" onclick="alert('Abonnement annuel: 100€/an\nÉconomisez 20€ !\nContactez: +229 01 91 46 72 83')">100€/an</button>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;margin-top:12px">
+      <p style="font-weight:700;font-size:13px;margin-bottom:10px">🤝 Mon code parrainage</p>
+      <div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);border-radius:8px;padding:12px;text-align:center">
+        <p id="clientRefCode" style="font-size:20px;font-weight:900;font-family:monospace;color:var(--green)">OMP-XXXXXX</p>
+        <p style="color:var(--gray);font-size:10px;margin-top:3px">Partagez ce code · Gagnez €25 par ami</p>
+        <button onclick="navigator.clipboard?.writeText(document.getElementById('clientRefCode').textContent);alert('Code copié !')" style="margin-top:8px;background:var(--green);color:white;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600">📋 Copier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: ADMIN DASHBOARD -->
+<div id="screen-admin" class="screen">
+  <div style="padding:18px 16px;max-width:900px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2 style="font-weight:900;font-size:20px">👑 Dashboard Admin</h2>
+        <p style="color:var(--gray);font-size:11px">Agnikpe Régis · Fondateur & CEO · ETS OMNIPAY</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-primary" onclick="showScreen('terminal')" style="padding:8px 14px;font-size:12px">⚡ Terminal Pro</button>
+        <button class="btn-danger" onclick="logout()">Déconnexion</button>
+      </div>
+    </div>
+    <!-- STATUS -->
+    <div style="background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.3);border-radius:12px;padding:12px;margin-bottom:18px">
+      <p style="font-weight:700;font-size:13px"><span class="pulse"></span>OMNIPAY-EU.COM · OPÉRATIONNEL · Ecobank BJ66BJ0620102211245994000105</p>
+    </div>
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">SOLDE ECOBANK</div><div class="kpi-val" style="color:var(--green)">650,000</div><div style="font-size:10px;color:var(--gray)">FCFA · ≈€990</div></div>
+      <div class="kpi" style="border-color:var(--gold)"><div class="kpi-label">CLIENTS</div><div class="kpi-val" id="adminClients" style="color:var(--gold)">0</div></div>
+      <div class="kpi" style="border-color:var(--blue)"><div class="kpi-label">ABONNEMENTS</div><div class="kpi-val" id="adminSubs" style="color:#60A5FA">0</div></div>
+      <div class="kpi"><div class="kpi-label">REVENUS MOIS</div><div class="kpi-val" id="adminRevenue" style="color:var(--green)">€0</div></div>
+    </div>
+    <!-- SALAIRE -->
+    <div class="sub-card" style="margin-bottom:14px">
+      <p style="color:var(--gold);font-weight:700;font-size:13px;margin-bottom:8px">💼 Salaire Mensuel Fondateur</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+          <p style="color:var(--gray);font-size:10px">Objectif 50 clients</p>
+          <p style="color:var(--green);font-weight:800;font-size:16px">€250/mois</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+          <p style="color:var(--gray);font-size:10px">Objectif 100 clients</p>
+          <p style="color:var(--gold);font-weight:800;font-size:16px">€500/mois</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;text-align:center">
+          <p style="color:var(--gray);font-size:10px">Objectif 500 clients</p>
+          <p style="color:#60A5FA;font-weight:800;font-size:16px">€2,500/mois</p>
+        </div>
+      </div>
+      <p style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:8px">Calcul: 10€/client/mois × clients actifs × 50% (après frais opérationnels)</p>
+    </div>
+    <!-- CLIENTS LIST -->
+    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;margin-bottom:14px">
+      <p style="font-weight:700;font-size:13px;margin-bottom:12px">👥 Clients inscrits</p>
+      <div id="clientsList"><p style="color:var(--gray);font-size:12px">Aucun client encore — partagez omnipay-eu.com !</p></div>
+    </div>
+    <!-- PROCHAINES ETAPES -->
+    <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px">
+      <p style="font-weight:700;font-size:13px;margin-bottom:12px">🚀 Feuille de route</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--green);font-size:16px">✅</span><p style="font-size:12px">IFU · RCCM · Ecobank · Stripe · Wise · Site en ligne</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:16px">⏳</span><p style="font-size:12px">0→50 clients : Promotion WhatsApp & réseaux sociaux</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:16px">⏳</span><p style="font-size:12px">50→100 clients : Partenariats entreprises locales</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:16px">⏳</span><p style="font-size:12px">100+ clients : Partenariat MTN, Orange, Western Union</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:16px">⏳</span><p style="font-size:12px">Agrément BCEAO · Licences UE (EMI)</p></div>
+        <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:16px">⏳</span><p style="font-size:12px">App mobile iOS / Android — Phase 2</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: TERMINAL PRO -->
+<div id="screen-terminal" class="screen">
+  <div class="terminal-app">
+    <!-- SIDEBAR TERMINAL -->
+    <aside class="t-sidebar">
+      <div class="t-logo">
+        <span style="font-size:18px;color:#818cf8">⬡</span>
+        <span class="t-logo-text">OmniPay Pro</span>
+      </div>
+      <nav class="t-nav">
+        <button class="t-btn active" onclick="showTPanel('t-dashboard',this)"><span>◈</span> <span>Tableau de bord</span></button>
+        <button class="t-btn" onclick="showTPanel('t-pay',this)"><span>▶</span> <span>Payer/Encaisser</span></button>
+        <button class="t-btn" onclick="showTPanel('t-crypto',this)"><span>₿</span> <span>Crypto</span></button>
+        <button class="t-btn" onclick="showTPanel('t-receive',this)"><span>↓</span> <span>Recevoir</span></button>
+        <button class="t-btn" onclick="showTPanel('t-gift',this)"><span>◎</span> <span>Cartes cadeaux</span></button>
+        <button class="t-btn" onclick="showTPanel('t-history',this)"><span>≡</span> <span>Historique</span></button>
+        <button class="t-btn" onclick="showTPanel('t-settings',this)"><span>⚙</span> <span>Paramètres</span></button>
+        <button class="t-btn" onclick="showScreen('admin')" style="margin-top:auto"><span>←</span> <span>Retour Admin</span></button>
+      </nav>
+      <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:10px;color:#6ee7b7">🔒 E2EE · PCI DSS L1</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:2px">v2.0 · OMNIPAY</div>
+      </div>
+    </aside>
+    <!-- MAIN TERMINAL -->
+    <main class="t-main">
+      <div class="t-topbar">
+        <span class="t-title" id="t-page-title">Tableau de bord</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="t-badge t-badge-green">● Connecté</span>
+          <span class="t-badge t-badge-blue">Ecobank</span>
+          <span class="t-badge t-badge-amber">KYC ✓</span>
+          <div style="width:30px;height:30px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">R</div>
+        </div>
+      </div>
+
+      <!-- T-DASHBOARD -->
+      <div id="t-dashboard" class="t-panel active">
+        <div class="t-stats-grid">
+          <div class="t-stat"><div class="t-stat-label">Volume aujourd'hui</div><div class="t-stat-value">€ 3 840</div><div class="t-stat-change">+12% vs hier</div></div>
+          <div class="t-stat"><div class="t-stat-label">Transactions</div><div class="t-stat-value">47</div><div class="t-stat-change">+5 ce matin</div></div>
+          <div class="t-stat"><div class="t-stat-label">Crypto reçu</div><div class="t-stat-value">€ 640</div><div class="t-stat-change">BTC + ETH</div></div>
+          <div class="t-stat"><div class="t-stat-label">Taux succès</div><div class="t-stat-value">99.2%</div><div class="t-stat-change">Excellent</div></div>
+        </div>
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Méthodes actives</div>
+            <div id="t-method-list"></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Dernières transactions</div>
+            <div id="mini-tx"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-PAY -->
+      <div id="t-pay" class="t-panel">
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Payer / Encaisser</div>
+            <div id="t-pay-form">
+              <div class="t-amount-hero"><div class="t-amount-label">Montant</div><div class="t-amount-big" id="t-amount-display">€ 0,00</div></div>
+              <div class="t-form-group">
+                <label>Montant</label>
+                <div style="display:grid;grid-template-columns:1fr auto;gap:6px">
+                  <input type="number" id="t-pay-amount" placeholder="0.00" oninput="tUpdateAmount()">
+                  <select id="t-pay-currency" onchange="tUpdateAmount()" style="width:auto;min-width:80px">
+                    <option>EUR</option><option>USD</option><option>GBP</option><option>XOF</option>
+                  </select>
+                </div>
+              </div>
+              <div class="t-form-group"><label>Méthode de paiement</label>
+                <div class="t-method-grid">
+                  <div class="t-m-tile selected" onclick="tSelMethod(this)"><div class="t-m-icon">💳</div><div class="t-m-name">CB/Visa</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">🔵</div><div class="t-m-name">PayPal</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">🏦</div><div class="t-m-name">SEPA</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">📱</div><div class="t-m-name">MoMo</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">🏦</div><div class="t-m-name">Wise</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">🟠</div><div class="t-m-name">Orange</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">💵</div><div class="t-m-name">W.Union</div></div>
+                  <div class="t-m-tile" onclick="tSelMethod(this)"><div class="t-m-icon">₿</div><div class="t-m-name">Crypto</div></div>
+                </div>
+              </div>
+              <div class="t-form-group"><label>Référence</label><input type="text" id="t-pay-ref" placeholder="CMD-2026-001"></div>
+              <div class="t-form-group"><label>Pays</label><input type="text" id="t-pay-country" value="Bénin"></div>
+              <button class="t-btn-primary" onclick="tProcessPay()">✓ Confirmer le paiement</button>
+            </div>
+            <div id="t-pay-success" style="display:none">
+              <div style="text-align:center;padding:20px">
+                <div style="font-size:40px;margin-bottom:10px">✅</div>
+                <p style="font-weight:700;color:#059669;font-size:14px">Paiement confirmé !</p>
+                <p id="t-pay-success-msg" style="font-size:11px;color:#6b7280;margin-top:6px"></p>
+                <button class="t-btn-secondary" onclick="tResetPay()" style="margin-top:14px">Nouveau paiement</button>
+              </div>
+            </div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Sécurité</div>
+            <div class="t-sec-line">🔒 Toutes les transactions sont chiffrées E2EE</div>
+            <div class="t-check-item">✓ Données tokenisées (PCI DSS)</div>
+            <div class="t-check-item">✓ Authentification 3DS2 activée</div>
+            <div class="t-check-item">✓ Détection fraude temps réel</div>
+            <div class="t-check-item">✓ KYC vérifié · RCCM RB/ABC/26 A 142268</div>
+            <div class="t-check-item">✓ IFU: 0202671161075 · Bénin</div>
+            <div class="t-card-title" style="margin-top:18px">Frais Omnipay</div>
+            <div class="t-fee-table">
+              <div class="t-fee-row"><span>Mobile Money</span><span>2.5%</span></div>
+              <div class="t-fee-row"><span>Transfert international</span><span>2.5-3%</span></div>
+              <div class="t-fee-row"><span>Crypto</span><span>1.5%</span></div>
+              <div class="t-fee-row"><span>Cartes cadeaux</span><span>3%</span></div>
+              <div class="t-fee-row"><span>SEPA / Virement</span><span>1%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-CRYPTO -->
+      <div id="t-crypto" class="t-panel">
+        <div class="t-sub-banner">⚠️ Crypto — Déclarez vos transactions conformément à la réglementation en vigueur au Bénin.</div>
+        <div class="t-ticker-row" id="t-crypto-ticker"></div>
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Encaisser en crypto</div>
+            <div class="t-crypto-grid">
+              <div class="t-c-tile selected" onclick="tSelCrypto(this,'BTC','Bitcoin',87420)"><div class="t-c-icon">₿</div><div class="t-c-name">Bitcoin</div><div class="t-c-price" id="tp-BTC">€87,420</div></div>
+              <div class="t-c-tile" onclick="tSelCrypto(this,'ETH','Ethereum',3210)"><div class="t-c-icon">⟠</div><div class="t-c-name">Ethereum</div><div class="t-c-price" id="tp-ETH">€3,210</div></div>
+              <div class="t-c-tile" onclick="tSelCrypto(this,'USDT','Tether',0.92)"><div class="t-c-icon">₮</div><div class="t-c-name">Tether</div><div class="t-c-price" id="tp-USDT">€0.92</div></div>
+              <div class="t-c-tile" onclick="tSelCrypto(this,'XRP','Ripple',0.52)"><div class="t-c-icon">✕</div><div class="t-c-name">Ripple</div><div class="t-c-price" id="tp-XRP">€0.52</div></div>
+              <div class="t-c-tile" onclick="tSelCrypto(this,'LTC','Litecoin',78.4)"><div class="t-c-icon">Ł</div><div class="t-c-name">Litecoin</div><div class="t-c-price" id="tp-LTC">€78.40</div></div>
+              <div class="t-c-tile" onclick="tSelCrypto(this,'USDC','USD Coin',0.92)"><div class="t-c-icon">$</div><div class="t-c-name">USDC</div><div class="t-c-price" id="tp-USDC">€0.92</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+              <div class="t-form-group"><label>Montant EUR</label><input type="number" id="t-crypto-eur" placeholder="100" oninput="tCalcCrypto()"></div>
+              <div class="t-form-group"><label id="t-crypto-equiv-label">Équivalent BTC</label><input type="text" id="t-crypto-equiv" readonly style="background:#f8f8f8"></div>
+            </div>
+            <button style="width:100%;padding:10px;font-size:14px;font-weight:600;border-radius:8px;border:none;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;cursor:pointer" onclick="tGenCryptoAddr()">₿ Générer adresse de paiement</button>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Adresse de paiement</div>
+            <div id="t-crypto-waiting" style="color:#999;padding:30px 0;text-align:center;font-size:13px">Sélectionnez une crypto et générez l'adresse.</div>
+            <div id="t-crypto-result" style="display:none">
+              <div style="text-align:center;margin-bottom:14px"><canvas id="t-qr-canvas"></canvas></div>
+              <div style="font-size:11px;color:#666;margin-bottom:3px" id="t-addr-network-label">Réseau Bitcoin</div>
+              <div class="crypto-addr-box" id="t-crypto-addr-display"></div>
+              <p style="font-size:10px;color:#6b7280">⏱ Valable 30 min · 1 confirmation requise · 🔒 Adresse unique</p>
+              <button class="t-btn-secondary" onclick="tResetCrypto()" style="width:100%;margin-top:10px">Nouvelle adresse</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-RECEIVE -->
+      <div id="t-receive" class="t-panel">
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Générer un lien de paiement</div>
+            <div class="t-form-group"><label>Montant (€)</label><input type="number" id="t-recv-amount" placeholder="0.00"></div>
+            <div class="t-form-group"><label>Description</label><input type="text" id="t-recv-desc" placeholder="Facture #2026-001"></div>
+            <div class="t-form-group"><label>Client</label><input type="text" id="t-recv-client" placeholder="Nom du client"></div>
+            <div class="t-form-group">
+              <label>Modes acceptés</label>
+              <select><option>Tous (CB + PayPal + MoMo + Crypto)</option><option>CB + PayPal uniquement</option><option>Crypto uniquement</option><option>Mobile Money uniquement</option></select>
+            </div>
+            <button class="t-btn-primary" onclick="tGenLink()">🔗 Générer le lien</button>
+            <div id="t-link-result" style="display:none;margin-top:14px">
+              <div class="link-box" id="t-link-val"></div>
+              <button class="t-btn-secondary" onclick="tCopyLink()" style="width:100%;margin-top:8px">📋 Copier le lien</button>
+            </div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Fonds reçus — 30 jours</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+              <div style="background:#f9fafb;border-radius:7px;padding:10px"><div style="font-size:10px;color:#6b7280;margin-bottom:3px">Total reçu</div><div style="font-size:16px;font-weight:700;color:#1a1a2e">€ 18,420</div></div>
+              <div style="background:#f9fafb;border-radius:7px;padding:10px"><div style="font-size:10px;color:#6b7280;margin-bottom:3px">En attente</div><div style="font-size:16px;font-weight:700;color:#1a1a2e">€ 1,240</div></div>
+            </div>
+            <div class="t-card-title">Origine des transferts</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:80px">🇫🇷 France</span><div style="flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden"><div style="width:60%;height:100%;background:#4f46e5;border-radius:3px"></div></div><span>60%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:80px">🇩🇪 Allemagne</span><div style="flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden"><div style="width:15%;height:100%;background:#4f46e5;border-radius:3px"></div></div><span>15%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:80px">🌍 Bénin</span><div style="flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden"><div style="width:15%;height:100%;background:#00C896;border-radius:3px"></div></div><span>15%</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:80px">🌍 Autres</span><div style="flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden"><div style="width:10%;height:100%;background:#f59e0b;border-radius:3px"></div></div><span>10%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-GIFT -->
+      <div id="t-gift" class="t-panel">
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Cartes cadeaux & Prépayées</div>
+            <div class="t-gift-grid">
+              <div class="t-g-tile selected" onclick="tSelGift(this,'Transcash')"><div style="font-size:18px">🎫</div><div style="font-size:10px;font-weight:500;color:#374151">Transcash</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'PCS')"><div style="font-size:18px">💳</div><div style="font-size:10px;font-weight:500;color:#374151">PCS</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'Neosurf')"><div style="font-size:18px">🎟</div><div style="font-size:10px;font-weight:500;color:#374151">Neosurf</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'Steam')"><div style="font-size:18px">🎮</div><div style="font-size:10px;font-weight:500;color:#374151">Steam</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'iTunes')"><div style="font-size:18px">🍎</div><div style="font-size:10px;font-weight:500;color:#374151">iTunes</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'Amazon')"><div style="font-size:18px">📦</div><div style="font-size:10px;font-weight:500;color:#374151">Amazon</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'Google Play')"><div style="font-size:18px">▶</div><div style="font-size:10px;font-weight:500;color:#374151">Google</div></div>
+              <div class="t-g-tile" onclick="tSelGift(this,'Xbox')"><div style="font-size:18px">🎪</div><div style="font-size:10px;font-weight:500;color:#374151">Xbox</div></div>
+            </div>
+            <div class="t-form-group"><label>Numéro de carte / Code</label><input type="text" id="t-gift-card-num" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div class="t-form-group"><label>Montant (€)</label><input type="number" id="t-gift-amount" placeholder="20"></div>
+              <div class="t-form-group"><label>Opération</label><select id="t-gift-op"><option>Rechargement</option><option>Achat carte</option><option>Vérification solde</option></select></div>
+            </div>
+            <div class="t-sec-line">🔒 Rechargement chiffré · Aucune donnée stockée en clair</div>
+            <button class="t-btn-primary" onclick="tProcessGift()">🎁 Traiter la carte</button>
+            <div id="t-gift-result" style="display:none;margin-top:10px;background:#d1fae5;border-radius:7px;padding:9px 12px;font-size:12px;color:#065f46"><span id="t-gift-msg"></span></div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Soldes actifs</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f9fafb;border-radius:7px"><span style="font-size:18px">🎫</span><span style="flex:1;font-size:12px;color:#374151">Transcash ****4521</span><span style="font-weight:700;color:#059669;font-size:12px">€ 45,00</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f9fafb;border-radius:7px"><span style="font-size:18px">💳</span><span style="flex:1;font-size:12px;color:#374151">PCS ****8832</span><span style="font-weight:700;color:#059669;font-size:12px">€ 120,50</span></div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f9fafb;border-radius:7px"><span style="font-size:18px">🎟</span><span style="flex:1;font-size:12px;color:#374151">Neosurf ****1209</span><span style="font-weight:700;color:#059669;font-size:12px">€ 25,00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-HISTORY -->
+      <div id="t-history" class="t-panel">
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+          <select onchange="tFilterHistory(this.value)" style="padding:7px 10px;border:1px solid #dde1e7;border-radius:7px;font-size:12px">
+            <option value="all">Toutes les transactions</option>
+            <option value="in">Reçu</option><option value="out">Envoyé</option>
+            <option value="crypto">Crypto</option><option value="gift">Cartes cadeaux</option>
+          </select>
+          <input type="date" value="2026-06-01" style="padding:7px 10px;border:1px solid #dde1e7;border-radius:7px;font-size:12px">
+          <input type="date" value="2026-07-02" style="padding:7px 10px;border:1px solid #dde1e7;border-radius:7px;font-size:12px">
+          <button class="t-btn-secondary" onclick="tExportCSV()">📥 Export CSV</button>
+        </div>
+        <div class="t-stats-grid" style="margin-bottom:16px">
+          <div class="t-stat"><div class="t-stat-label">Volume 30j</div><div class="t-stat-value">€ 18,420</div></div>
+          <div class="t-stat"><div class="t-stat-label">Transactions</div><div class="t-stat-value">247</div></div>
+          <div class="t-stat"><div class="t-stat-label">Crypto</div><div class="t-stat-value">€ 53,200</div></div>
+          <div class="t-stat"><div class="t-stat-label">Succès</div><div class="t-stat-value">99.2%</div></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;border:1px solid #e5e7eb;overflow:auto">
+          <table class="t-tx-table">
+            <thead><tr><th>Date</th><th>Description</th><th>Méthode</th><th>Pays</th><th>Statut</th><th>Montant</th></tr></thead>
+            <tbody id="t-tx-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- T-SETTINGS -->
+      <div id="t-settings" class="t-panel">
+        <div class="t-grid-2">
+          <div class="t-card">
+            <div class="t-card-title">Compte ETS OMNIPAY</div>
+            <div class="t-form-group"><label>Nom entreprise</label><input type="text" value="ETS OMNIPAY"></div>
+            <div class="t-form-group"><label>IBAN Ecobank</label><input type="text" value="BJ66BJ0620102211245994000105"></div>
+            <div class="t-form-group"><label>IFU</label><input type="text" value="0202671161075"></div>
+            <div class="t-form-group"><label>RCCM</label><input type="text" value="RB/ABC/26 A 142268"></div>
+            <div class="t-form-group"><label>Téléphone</label><input type="text" value="+229 01 91 46 72 83"></div>
+            <div class="t-form-group"><label>Clé API Stripe</label><input type="password" value="sk_live_••••••DW08"></div>
+            <div class="t-form-group"><label>Wise API</label><input type="password" value="wse_••••••••"></div>
+            <button class="t-btn-primary" onclick="tShowToast('Paramètres sauvegardés ✓','success')">💾 Sauvegarder</button>
+          </div>
+          <div class="t-card">
+            <div class="t-card-title">Sécurité & Conformité</div>
+            <div class="t-setting-row"><span>Chiffrement E2EE</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-setting-row"><span>Tokenisation PCI DSS</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-setting-row"><span>Authentification 3DS2</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-setting-row"><span>KYC automatique</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-setting-row"><span>Alertes Anti-fraude</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-setting-row"><span>Conversion crypto → FCFA</span><span class="t-toggle-on">ON</span></div>
+            <div class="t-card-title" style="margin-top:18px">Abonnement Omnipay</div>
+            <div class="t-setting-row"><span>Plan actuel</span><span style="font-size:10px;padding:2px 8px;background:#fef3c7;color:#92400e;border-radius:8px;font-weight:600">FONDATEUR</span></div>
+            <div class="t-setting-row"><span>Prochaine facture</span><span style="font-size:11px;color:#6b7280">01/08/2026</span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h3 style="margin-bottom:18px;font-size:17px">Connexion</h3>
+    <div id="loginMsg"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="vous@email.com"></div>
+    <div class="form-group"><label>Mot de passe</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="handleLogin()" style="width:100%;padding:11px;margin-top:4px">Se connecter</button>
+    <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--gray)">Pas de compte ? <a onclick="closeModal('loginModal');openModal('signupModal')" style="color:var(--green);cursor:pointer;font-weight:600">Créer un compte</a></p>
+  </div>
+</div>
+
+<!-- MODAL SIGNUP -->
+<div class="modal" id="signupModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+    <h3 style="margin-bottom:18px;font-size:17px">Créer mon compte</h3>
+    <div id="signupMsg"></div>
+    <div class="form-group"><label>Nom complet</label><input type="text" id="signupName" placeholder="Votre nom"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="vous@email.com"></div>
+    <div class="form-group"><label>Téléphone</label><input type="tel" id="signupPhone" placeholder="+229 01 XX XX XX"></div>
+    <div class="form-group"><label>Pays</label><input type="text" id="signupCountry" placeholder="Bénin"></div>
+    <div class="form-group"><label>Mot de passe</label><input type="password" id="signupPass" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="handleSignup()" style="width:100%;padding:11px;margin-top:4px">🚀 Créer mon compte</button>
+    <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--gray)">Déjà inscrit ? <a onclick="closeModal('signupModal');openModal('loginModal')" style="color:var(--green);cursor:pointer;font-weight:600">Se connecter</a></p>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const ADMIN_EMAIL = 'regisagnikpe2002@gmail.com';
+const ADMIN_PASS = 'OmniPay2026!Regis';
+const RATES = {FCFA:1,EUR:655.96,USD:601.45,GBP:761.20,CAD:445.30,BTC:36000000,USDT:601.45};
+const CRYPTO_PRICES = {BTC:{price:87420,chg:+2.4},ETH:{price:3210,chg:+1.8},USDT:{price:0.92,chg:-0.1},USDC:{price:0.92,chg:0.0},LTC:{price:78.40,chg:-0.6},XRP:{price:0.52,chg:+3.1}};
+let currentUser = null;
+let tState = {method:'CB/Visa',crypto:{sym:'BTC',name:'Bitcoin',price:87420},gift:'Transcash'};
+
+const SAMPLE_TX = [
+  {date:'02/07/2026 10:14',desc:'Bitcoin reçu — 900114 BTC',method:'Bitcoin',country:'International',status:'ok',amount:+99.67,type:'crypto'},
+  {date:'02/07/2026 09:42',desc:'Virement Ecobank reçu',method:'Ecobank',country:'Bénin',status:'ok',amount:+350000,type:'in'},
+  {date:'01/07/2026 18:10',desc:'Transfert MoMo envoyé',method:'MTN MoMo',country:'Bénin',status:'ok',amount:-50000,type:'out'},
+  {date:'01/07/2026 15:33',desc:'Ethereum reçu — 0.031 ETH',method:'Ethereum',country:'International',status:'ok',amount:+151,type:'crypto'},
+  {date:'01/07/2026 12:05',desc:'PayPal reçu',method:'PayPal',country:'France',status:'ok',amount:+215.00,type:'in'},
+  {date:'30/06/2026 17:44',desc:'Transfert Wise international',method:'Wise',country:'Sénégal',status:'ok',amount:+320.000,type:'in'},
+  {date:'30/06/2026 14:30',desc:'Rechargement Transcash',method:'Transcash',country:'France',status:'ok',amount:-7000,type:'gift'},
+];
+
+// ===== LANG =====
+const L = {
+  fr:{sub:'Une autre finance est possible.',sub2:'Honnête. Africaine. Mondiale. 🇧🇯'},
+  en:{sub:'A different kind of finance.',sub2:'Honest. African. Global. 🇧🇯'},
+  pt:{sub:'Outra finança é possível.',sub2:'Honesta. Africana. Global. 🇧🇯'}
+};
+function setLang(l,btn){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('hero-sub').textContent=L[l].sub;
+  document.getElementById('hero-sub2').textContent=L[l].sub2;
+}
+
+// ===== SCREENS =====
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='admin') updateAdminDash();
+}
+
+// ===== CONVERTER =====
+function convert(){
+  const a=parseFloat(document.getElementById('convAmount').value)||0;
+  const f=document.getElementById('convFrom').value;
+  const t=document.getElementById('convTo').value;
+  const r=(a/RATES[f]*RATES[t]).toFixed(f==='BTC'||t==='BTC'?8:2);
+  document.getElementById('convResult').textContent=r+' '+t;
+}
+convert();
+
+// ===== MODALS =====
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.classList.remove('open')}
+
+// ===== NAV BTN =====
+function handleNavBtn(){
+  if(currentUser){
+    if(currentUser.role==='admin') showScreen('admin');
+    else showScreen('client');
+  } else {
+    openModal('loginModal');
+  }
+}
+
+// ===== AUTH =====
+function handleLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!email||!pass){showMsg('loginMsg','Remplis tous les champs','error');return}
+  if(email===ADMIN_EMAIL&&pass===ADMIN_PASS){
+    currentUser={role:'admin',name:'Agnikpe Régis OLATOUNDE',email};
+    closeModal('loginModal');
+    document.getElementById('mainNavBtn').textContent='Admin 👑';
+    showScreen('admin');
+    return;
+  }
+  const users=JSON.parse(localStorage.getItem('op_users')||'[]');
+  const u=users.find(x=>x.email===email&&x.pass===pass);
+  if(u){
+    currentUser=u;
+    closeModal('loginModal');
+    document.getElementById('mainNavBtn').textContent='Mon compte';
+    document.getElementById('clientWelcome').textContent='Bienvenue, '+u.name.split(' ')[0]+' 👋';
+    document.getElementById('clientRefCode').textContent=u.ref;
+    showScreen('client');
+  } else {
+    showMsg('loginMsg','Email ou mot de passe incorrect','error');
+  }
+}
+
+function handleSignup(){
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const phone=document.getElementById('signupPhone').value.trim();
+  const country=document.getElementById('signupCountry').value.trim()||'FRANCE';
+  const pass=document.getElementById('signupPass').value;
+  if(!name||!email||!pass){showMsg('signupMsg','Tous les champs sont requis','error');return}
+  const users=JSON.parse(localStorage.getItem('op_users')||'[]');
+  if(users.find(x=>x.email===email)){showMsg('signupMsg','Email déjà utilisé','error');return}
+  const ref='OMP-'+Math.random().toString(36).substr(2,6).toUpperCase();
+  const u={name,email,phone,country,pass,ref,role:'client',joined:new Date().toLocaleDateString('fr')};
+  users.push(u);
+  localStorage.setItem('op_users',JSON.stringify(users));
+  showMsg('signupMsg','✅ Compte créé ! Bienvenue sur Omnipay !','success');
+  setTimeout(()=>{
+    currentUser=u;
+    closeModal('signupModal');
+    document.getElementById('mainNavBtn').textContent='Mon compte';
+    
