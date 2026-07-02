@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omnipay | Fintech Africaine Mondiale</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0A1628;
+  --navy2:#132240;
+  --blue:#1A56DB;
+  --green:#00C896;
+  --gold:#F4A726;
+  --white:#FFFFFF;
+  --gray:#8A9BB0;
+  --light:#F0F4FF;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--navy);color:white;overflow-x:hidden}
+
+/* NAV */
+nav{background:rgba(10,22,40,0.95);backdrop-filter:blur(10px);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,200,150,0.2)}
+.logo{font-size:22px;font-weight:900;letter-spacing:-0.5px}
+.logo span{color:var(--green)}
+.logo small{color:var(--gold);font-size:11px;font-weight:600;margin-left:4px}
+.nav-links{display:flex;gap:8px;align-items:center}
+.lang-btn{background:rgba(255,255,255,0.08);border:none;color:var(--gray);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+.lang-btn.active{background:var(--green);color:white}
+.nav-btn{background:var(--blue);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px}
+
+/* TICKER */
+.ticker-wrap{background:var(--navy2);padding:8px 0;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.05)}
+.ticker{display:flex;gap:40px;white-space:nowrap;animation:ticker 25s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker span{color:var(--gold);font-size:12px;font-weight:500}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#020B1A 0%,#0A1628 50%,#0D2B1A 100%);padding:70px 20px 50px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 30% 50%,rgba(0,200,150,0.06),transparent 60%),radial-gradient(circle at 70% 20%,rgba(26,86,219,0.08),transparent 50%)}
+.hero-badge{display:inline-block;background:rgba(244,167,38,0.15);color:var(--gold);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:20px;border:1px solid rgba(244,167,38,0.3)}
+.hero h1{font-size:clamp(38px,8vw,72px);font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:12px}
+.hero h1 span{color:var(--green)}
+.hero-sub{color:rgba(255,255,255,0.65);font-size:clamp(15px,3vw,18px);margin-bottom:8px}
+.hero-sub2{color:var(--green);font-size:13px;font-weight:600;margin-bottom:36px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.btn-primary{background:linear-gradient(135deg,var(--green),#00A87E);color:white;padding:14px 32px;border-radius:10px;border:none;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s}
+.btn-secondary{background:rgba(255,255,255,0.08);color:white;padding:14px 32px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);font-weight:600;font-size:15px;cursor:pointer}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#D4891A);color:var(--navy);padding:14px 32px;border-radius:10px;border:none;font-weight:700;font-size:15px;cursor:pointer}
+
+/* CONVERTER */
+.converter{background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,150,0.25);border-radius:16px;padding:24px;max-width:480px;margin:0 auto}
+.converter h3{color:var(--gold);font-size:12px;font-weight:700;margin-bottom:16px;text-align:left}
+.conv-row{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:10px}
+.conv-input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white;padding:10px 12px;border-radius:8px;font-size:16px;font-weight:700;width:100%}
+.conv-select{background:var(--navy2);border:1px solid rgba(255,255,255,0.15);color:white;padding:10px 12px;border-radius:8px;font-size:13px;width:100%}
+.conv-result{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);border-radius:8px;padding:12px;text-align:center;color:var(--green);font-size:22px;font-weight:900;font-family:monospace;margin-top:6px}
+.conv-note{color:var(--gray);font-size:11px;text-align:center;margin-top:8px}
+
+/* SECTIONS */
+.section{padding:50px 20px;max-width:1100px;margin:0 auto}
+.section-title{text-align:center;margin-bottom:8px}
+.section-title h2{font-size:clamp(22px,4vw,32px);font-weight:800}
+.section-title p{color:var(--gray);margin-top:6px;font-size:14px}
+.grid{display:grid;gap:14px;margin-top:28px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+
+/* CARDS */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px;transition:all .2s}
+.card:hover{border-color:rgba(0,200,150,0.3);background:rgba(0,200,150,0.04)}
+.card-icon{font-size:28px;margin-bottom:10px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.card p{color:var(--gray);font-size:13px;line-height:1.5}
+.card-link{display:inline-block;margin-top:12px;color:var(--green);font-size:12px;font-weight:700;text-decoration:none;border:1px solid rgba(0,200,150,0.3);padding:5px 12px;border-radius:6px}
+
+/* SERVICE GRID */
+.service-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s}
+.service-item:hover{border-color:var(--green);transform:translateY(-2px)}
+.service-item .icon{font-size:24px;margin-bottom:8px}
+.service-item .name{font-size:12px;font-weight:700;color:white}
+.service-item .type{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* ECOBANK BANNER */
+.ecobank-banner{background:linear-gradient(135deg,var(--navy2),#0D2B1A);border:1px solid rgba(0,200,150,0.3);border-radius:14px;padding:20px;margin-top:28px}
+.iban{font-family:monospace;color:var(--green);font-size:15px;word-break:break-all;margin:8px 0}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,0.05);border-radius:10px;padding:4px;margin-bottom:20px;overflow-x:auto}
+.tab{flex:1;min-width:80px;padding:8px 12px;border:none;background:transparent;color:var(--gray);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;white-space:nowrap;transition:all .2s}
+.tab.active{background:var(--blue);color:white}
+
+/* ADMIN */
+.admin-hidden{display:none}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;border-top:3px solid var(--green)}
+.kpi-val{font-size:24px;font-weight:900;margin:6px 0}
+.kpi-label{font-size:11px;color:var(--gray)}
+
+/* MODAL */
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-box{background:var(--navy2);border:1px solid rgba(0,200,150,0.3);border-radius:16px;padding:28px;width:100%;max-width:400px;position:relative}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--gray);margin-bottom:5px}
+.form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:white;padding:10px 12px;border-radius:8px;font-size:14px}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green)}
+.form-group select option{background:var(--navy2)}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px}
+.msg.success{background:rgba(0,200,150,0.15);color:var(--green);border:1px solid rgba(0,200,150,0.3)}
+.msg.error{background:rgba(220,38,38,0.15);color:#F87171;border:1px solid rgba(220,38,38,0.3)}
+
+/* FOOTER */
+footer{background:var(--navy2);border-top:1px solid rgba(255,255,255,0.06);padding:40px 20px;text-align:center}
+footer .logo{font-size:24px;font-weight:900;margin-bottom:8px}
+footer p{color:var(--gray);font-size:12px;line-height:1.8}
+
+/* PULSE */
+.pulse{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(0.8)}}
+
+.tag{display:inline-block;background:rgba(0,200,150,0.12);color:var(--green);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.tag-gold{background:rgba(244,167,38,0.12);color:var(--gold)}
+.tag-blue{background:rgba(26,86,219,0.15);color:#60A5FA}
+
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:40px 0}
+
+@media(max-width:600px){
+  .hero{padding:50px 16px 40px}
+  .section{padding:36px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Omni<span>pay</span><small>BÉNIN</small></div>
+  <div class="nav-links">
+    <button class="lang-btn active" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    <button class="nav-btn" onclick="openModal('loginModal')" id="navBtn">Connexion</button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>📊 1 EUR = 655.96 FCFA</span>
+    <span>📊 1 USD = 601.45 FCFA</span>
+    <span>📊 1 GBP = 761.20 FCFA</span>
+    <span>₿ BTC = 80,920 USD</span>
+    <span>💎 USDT = 1.00 USD</span>
+    <span>🥜 Cajou Bénin: 850 FCFA/kg</span>
+    <span>🌽 Maïs: 180 FCFA/kg</span>
+    <span>🫘 Soja: 320 FCFA/kg</span>
+    <span>📊 Commission Omnipay: 2-3% seulement</span>
+    <span>📊 1 EUR = 655.96 FCFA</span>
+    <span>📊 1 USD = 601.45 FCFA</span>
+    <span>📊 1 GBP = 761.20 FCFA</span>
+    <span>₿ BTC = 80,920 USD</span>
+    <span>💎 USDT = 1.00 USD</span>
+    <span>🥜 Cajou Bénin: 850 FCFA/kg</span>
+    <span>🌽 Maïs: 180 FCFA/kg</span>
+    <span>🫘 Soja: 320 FCFA/kg</span>
+    <span>📊 Commission Omnipay: 2-3% seulement</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="position:relative">
+    <div class="hero-badge">🌍 Bénin · Afrique · Europe · Monde</div>
+    <h1>Omni<span>pay</span></h1>
+    <p class="hero-sub" id="hero-sub">Une autre finance est possible.</p>
+    <p class="hero-sub2" id="hero-sub2">Honnête. Africaine. Mondiale. 🇧🇯</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openModal('signupModal')">🚀 Créer mon compte</button>
+      <button class="btn-secondary" onclick="openModal('loginModal')">Connexion</button>
+    </div>
+    <!-- CONVERTER -->
+    <div class="converter">
+      <h3>⚡ CONVERTISSEUR EN DIRECT</h3>
+      <div class="conv-row">
+        <input class="conv-input" type="number" id="convAmount" value="100000" oninput="convert()">
+        <select class="conv-select" id="convFrom" onchange="convert()">
+          <option value="FCFA">FCFA</option>
+          <option value="EUR">EUR</option>
+          <option value="USD">USD</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CAD</option>
+          <option value="BTC">BTC</option>
+          <option value="USDT">USDT</option>
+        </select>
+      </div>
+      <select class="conv-select" id="convTo" onchange="convert()" style="margin-bottom:10px">
+        <option value="EUR">EUR</option>
+        <option value="FCFA">FCFA</option>
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+        <option value="USDT">USDT</option>
+        <option value="BTC">BTC</option>
+      </select>
+      <div class="conv-result" id="convResult">152.45 EUR</div>
+      <p class="conv-note">Commission Omnipay: 2.5% · Transparent & Honnête</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div style="background:#080F1E">
+
+<!-- SERVICES -->
+<div class="section">
+  <div class="section-title">
+    <h2>💸 Transferts & Paiements</h2>
+    <p>Envoie et reçois partout dans le monde via tous les canaux</p>
+  </div>
+  <div class="grid grid-4" style="margin-top:24px">
+    <div class="service-item"><div class="icon">📱</div><div class="name">MTN MoMo</div><div class="type">Mobile Money</div></div>
+    <div class="service-item"><div class="icon">📞</div><div class="name">Moov Money</div><div class="type">Mobile Money</div></div>
+    <div class="service-item"><div class="icon">🟠</div><div class="name">Orange Money</div><div class="type">Mobile Money</div></div>
+    <div class="service-item"><div class="icon">💵</div><div class="name">Western Union</div><div class="type">International</div></div>
+    <div class="service-item"><div class="icon">💰</div><div class="name">MoneyGram</div><div class="type">International</div></div>
+    <div class="service-item"><div class="icon">✈️</div><div class="name">RIA Money</div><div class="type">International</div></div>
+    <div class="service-item"><div class="icon">🔵</div><div class="name">PayPal</div><div class="type">En ligne</div></div>
+    <div class="service-item"><div class="icon">📲</div><div class="name">Remitly</div><div class="type">International</div></div>
+    <div class="service-item"><div class="icon">🏦</div><div class="name">Wise</div><div class="type">Banque en ligne</div></div>
+    <div class="service-item"><div class="icon">🔴</div><div class="name">Revolut</div><div class="type">Banque en ligne</div></div>
+    <div class="service-item"><div class="icon">⚡</div><div class="name">Stripe</div><div class="type">Paiement pro</div></div>
+    <div class="service-item"><div class="icon">🏦</div><div class="name">Ecobank</div><div class="type">Banque Afrique</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CRYPTO -->
+<div class="section">
+  <div class="section-title">
+    <h2>₿ Crypto & Actifs Numériques</h2>
+    <p>Achetez, vendez et échangez vos cryptomonnaies</p>
+  </div>
+  <div class="grid grid-4" style="margin-top:24px">
+    <div class="service-item"><div class="icon">⭐</div><div class="name">Binance</div><div class="type">BTC · ETH · USDT</div></div>
+    <div class="service-item"><div class="icon">📈</div><div class="name">Bybit</div><div class="type">Trading · Futures</div></div>
+    <div class="service-item"><div class="icon">💎</div><div class="name">USDT</div><div class="type">Stablecoin</div></div>
+    <div class="service-item"><div class="icon">🟠</div><div class="name">Bitcoin</div><div class="type">BTC</div></div>
+    <div class="service-item"><div class="icon">🔷</div><div class="name">Ethereum</div><div class="type">ETH</div></div>
+    <div class="service-item"><div class="icon">🌊</div><div class="name">XRP</div><div class="type">Ripple</div></div>
+    <div class="service-item"><div class="icon">📊</div><div class="name">Deriv</div><div class="type">Trading</div></div>
+    <div class="service-item"><div class="icon">🔗</div><div class="name">TRC20</div><div class="type">USDT réseau</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- GIFT CARDS -->
+<div class="section">
+  <div class="section-title">
+    <h2>🎁 Cartes Cadeaux</h2>
+    <p>Achat, vente et échange de cartes cadeaux internationales</p>
+  </div>
+  <div class="grid grid-4" style="margin-top:24px">
+    <div class="service-item"><div class="icon">💳</div><div class="name">Transcash</div><div class="type">France</div></div>
+    <div class="service-item"><div class="icon">💜</div><div class="name">PCS</div><div class="type">Prépayée</div></div>
+    <div class="service-item"><div class="icon">🎮</div><div class="name">Steam</div><div class="type">Gaming</div></div>
+    <div class="service-item"><div class="icon">🍎</div><div class="name">iTunes</div><div class="type">Apple</div></div>
+    <div class="service-item"><div class="icon">🔵</div><div class="name">Neosurf</div><div class="type">Prépayée</div></div>
+    <div class="service-item"><div class="icon">🎯</div><div class="name">Amazon</div><div class="type">E-commerce</div></div>
+    <div class="service-item"><div class="icon">🎵</div><div class="name">Google Play</div><div class="type">Android</div></div>
+    <div class="service-item"><div class="icon">🎪</div><div class="name">Xbox</div><div class="type">Gaming</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGRI -->
+<div class="section">
+  <div class="section-title">
+    <h2>🌱 Marché Agricole International</h2>
+    <p>Cajou · Soja · Maïs · Igname · et plus — directement de l'Afrique au monde</p>
+  </div>
+  <div class="grid grid-3" style="margin-top:24px">
+    <div class="card"><div class="card-icon">🥜</div><h3>Cajou Premium</h3><p>Bénin · 850 FCFA/kg · 5 tonnes disponibles</p><span class="tag">Export Europe</span></div>
+    <div class="card"><div class="card-icon">🫘</div><h3>Soja Bio</h3><p>Bénin · 320 FCFA/kg · 8 tonnes disponibles</p><span class="tag">Export Asie</span></div>
+    <div class="card"><div class="card-icon">🌽</div><h3>Maïs Séché</h3><p>Bénin · 180 FCFA/kg · 12 tonnes disponibles</p><span class="tag">Export USA</span></div>
+    <div class="card"><div class="card-icon">🍠</div><h3>Igname</h3><p>Bénin · 450 FCFA/kg · 6 tonnes disponibles</p><span class="tag">Export Europe</span></div>
+    <div class="card"><div class="card-icon">🍫</div><h3>Cacao</h3><p>Côte d'Ivoire · 1200 FCFA/kg · 3 tonnes</p><span class="tag">Export Monde</span></div>
+    <div class="card"><div class="card-icon">🌾</div><h3>Sésame</h3><p>Burkina · 950 FCFA/kg · 4 tonnes</p><span class="tag">Export Asie</span></div>
+  </div>
+  <div class="ecobank-banner" style="margin-top:28px">
+    <p style="color:var(--gold);font-size:12px;font-weight:700"><span class="pulse"></span>COMPTE ECOBANK VÉRIFIÉ</p>
+    <p class="iban">BJ66BJ0620102211245994000105</p>
+    <p style="color:var(--gray);font-size:12px">ETS OMNIPAY · Abomey-Calavi, Bénin · IFU: 0202671161075</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SERVICES FINANCIERS -->
+<div class="section">
+  <div class="section-title">
+    <h2>💼 Services Financiers</h2>
+  </div>
+  <div class="grid grid-2" style="margin-top:24px">
+    <div class="card">
+      <div class="card-icon">💳</div>
+      <h3>Carte Virtuelle Omnipay</h3>
+      <p>Payez partout dans le monde. Acceptée sur tous les sites e-commerce. QR Code intégré.</p>
+      <span class="tag-gold tag">10€/mois</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌱</div>
+      <h3>Prêts Agricoles</h3>
+      <p>Financement de vos projets agricoles. Taux: 3% mensuel. Remboursement après récolte.</p>
+      <span class="tag">3% mensuel</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">💰</div>
+      <h3>Épargne Rémunérée</h3>
+      <p>Faites fructifier votre argent. 8% annuel. Retraits possibles à tout moment.</p>
+      <span class="tag">8% annuel</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤝</div>
+      <h3>Programme Parrainage</h3>
+      <p>Parrainez vos proches et gagnez des commissions sur chaque client recruté.</p>
+      <span class="tag-gold tag">€25/client</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- end dark bg -->
+
+<!-- ADMIN DASHBOARD -->
+<div id="adminPanel" class="admin-hidden" style="background:#080F1E;padding:20px;max-width:900px;margin:0 auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h2 style="font-weight:900">Dashboard Admin 👑</h2>
+      <p style="color:var(--gray);font-size:13px">Agnikpe Régis Jean de Dieu · Fondateur & CEO</p>
+    </div>
+    <button class="btn-primary" onclick="logout()" style="background:#DC2626;padding:10px 20px;font-size:13px">Déconnexion</button>
+  </div>
+  <div style="background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.3);border-radius:12px;padding:14px;margin-bottom:20px">
+    <p style="font-weight:700"><span class="pulse"></span>OMNIPAY OPÉRATIONNEL · Ecobank BJ66BJ0620102211245994000105</p>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-label">SOLDE ECOBANK</div><div class="kpi-val" style="color:var(--green)">650,000</div><div style="font-size:11px;color:var(--gray)">FCFA · ≈ €990</div></div>
+    <div class="kpi" style="border-color:var(--gold)"><div class="kpi-label">CLIENTS</div><div class="kpi-val" id="adminClients" style="color:var(--gold)">0</div></div>
+    <div class="kpi" style="border-color:var(--blue)"><div class="kpi-label">TRANSFERTS</div><div class="kpi-val" style="color:#60A5FA">0</div></div>
+    <div class="kpi"><div class="kpi-label">COMMISSIONS</div><div class="kpi-val" style="color:var(--green)">€0</div></div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:20px;margin-bottom:16px">
+    <h3 style="margin-bottom:14px;font-size:15px">👥 Clients inscrits</h3>
+    <div id="clientsList"><p style="color:var(--gray);font-size:13px">Aucun client encore.</p></div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:20px">
+    <h3 style="margin-bottom:14px;font-size:15px">🚀 Prochaines étapes</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--green);font-size:20px">✅</span><p style="font-size:13px">IFU · RCCM · Ecobank · Stripe · Wise — Tout est en place</p></div>
+      <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:20px">⏳</span><p style="font-size:13px">Obtenir agrément BCEAO pour transferts officiels</p></div>
+      <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:20px">⏳</span><p style="font-size:13px">Activer cartes virtuelles (partenariat VISA)</p></div>
+      <div style="display:flex;gap:10px;align-items:center"><span style="color:var(--gold);font-size:20px">⏳</span><p style="font-size:13px">App mobile iOS / Android — Phase 2</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT DASHBOARD -->
+<div id="clientPanel" class="admin-hidden" style="background:#080F1E;padding:20px;max-width:700px;margin:0 auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <div><h2 id="clientWelcome" style="font-weight:800">Bienvenue 👋</h2><p style="color:var(--gray);font-size:12px">Compte Omnipay vérifié</p></div>
+    <button onclick="logout()" style="background:#DC2626;color:white;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:12px">Déconnexion</button>
+  </div>
+  <div style="background:linear-gradient(135deg,var(--navy2),#0D2B1A);border:1px solid rgba(0,200,150,0.3);border-radius:14px;padding:18px;margin-bottom:16px">
+    <p style="color:var(--gold);font-size:11px;font-weight:700">🏦 ECOBANK BÉNIN</p>
+    <p style="font-family:monospace;color:var(--green);font-size:14px;margin:6px 0">BJ66BJ0620102211245994000105</p>
+    <p style="color:var(--gray);font-size:11px">ETS OMNIPAY · Titulaire: Agnikpe Régis</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <div class="kpi"><div class="kpi-label">SOLDE</div><div class="kpi-val" style="color:var(--green);font-size:20px">0 FCFA</div></div>
+    <div class="kpi" style="border-color:var(--gold)"><div class="kpi-label">COMMISSIONS</div><div id="clientComm" class="kpi-val" style="color:var(--gold);font-size:20px">€0</div></div>
+  </div>
+  <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;margin-bottom:12px">
+    <p style="font-weight:700;margin-bottom:12px;font-size:14px">🤝 Mon code parrainage</p>
+    <div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);border-radius:8px;padding:12px;text-align:center">
+      <p id="clientRefCode" style="font-size:22px;font-weight:900;font-family:monospace;color:var(--green)">OMP-XXXXXX</p>
+      <p style="color:var(--gray);font-size:11px;margin-top:4px">Partagez ce code · Gagnez €25 par ami</p>
+    </div>
+  </div>
+</div>
+        <!-- FOOTER -->
+<footer>
+  <div class="logo">Omni<span style="color:var(--green)">pay</span><small style="color:var(--gold);font-size:11px;margin-left:4px">BÉNIN</small></div>
+  <p style="margin-top:12px">IFU: 0202671161075 · RCCM: RB/ABC/26 A 142268</p>
+  <p>Îlot 160, Kpossidja, Abomey-Calavi, Bénin</p>
+  <p>📞 +229 01 91 46 72 83 · 📧 regisagnikpe2002@gmail.com</p>
+  <p style="margin-top:12px;color:rgba(255,255,255,0.3)">© 2026 Omnipay-Bénin · Fondateur: Agnikpe Régis Jean de Dieu Olatounde</p>
+  <p style="color:rgba(255,255,255,0.2);font-size:11px;margin-top:4px">Tous droits réservés · Activité enregistrée au Greffe du Tribunal de Commerce de Cotonou</p>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <h3 style="margin-bottom:20px;font-size:18px">Connexion</h3>
+    <div id="loginMsg"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="vous@email.com"></div>
+    <div class="form-group"><label>Mot de passe</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="handleLogin()" style="width:100%;padding:12px;margin-top:4px">Se connecter</button>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gray)">Pas de compte ? <a onclick="closeModal('loginModal');openModal('signupModal')" style="color:var(--green);cursor:pointer;font-weight:600">Créer un compte</a></p>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal" id="signupModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">✕</button>
+    <h3 style="margin-bottom:20px;font-size:18px">Créer mon compte</h3>
+    <div id="signupMsg"></div>
+    <div class="form-group"><label>Nom complet</label><input type="text" id="signupName" placeholder="Votre nom"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="vous@email.com"></div>
+    <div class="form-group"><label>Téléphone</label><input type="tel" id="signupPhone" placeholder="+229 01 XX XX XX"></div>
+    <div class="form-group"><label>Pays</label><input type="text" id="signupCountry" placeholder="Bénin"></div>
+    <div class="form-group"><label>Mot de passe</label><input type="password" id="signupPass" placeholder="••••••••"></div>
+    <button class="btn-primary" onclick="handleSignup()" style="width:100%;padding:12px;margin-top:4px">🚀 Créer mon compte</button>
+    <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--gray)">Déjà inscrit ? <a onclick="closeModal('signupModal');openModal('loginModal')" style="color:var(--green);cursor:pointer;font-weight:600">Se connecter</a></p>
+  </div>
+</div>
+
+<script>
+// RATES
+const RATES={FCFA:1,EUR:655.96,USD:601.45,GBP:761.20,CAD:445.30,BTC:36000000,USDT:601.45};
+const ADMIN={email:'admin@omnipay.com',password:'Omnipay2026!'};
+
+// LANG
+const L={
+  fr:{sub:'Une autre finance est possible.',sub2:'Honnête. Africaine. Mondiale. 🇧🇯'},
+  en:{sub:'A different kind of finance.',sub2:'Honest. African. Global. 🇧🇯'},
+  pt:{sub:'Outra finança é possível.',sub2:'Honesta. Africana. Global. 🇧🇯'}
+};
+function setLang(l){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('hero-sub').textContent=L[l].sub;
+  document.getElementById('hero-sub2').textContent=L[l].sub2;
+}
+
+// CONVERTER
+function convert(){
+  const a=parseFloat(document.getElementById('convAmount').value)||0;
+  const f=document.getElementById('convFrom').value;
+  const t=document.getElementById('convTo').value;
+  const r=(a/RATES[f]*RATES[t]).toFixed(f==='BTC'||t==='BTC'?8:2);
+  document.getElementById('convResult').textContent=r+' '+t;
+}
+convert();
+
+// MODAL
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.classList.remove('open')}
+
+// AUTH
+function handleLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!email||!pass){showMsg('loginMsg','Remplis tous les champs','error');return}
+  if(email===ADMIN.email&&pass===ADMIN.password){
+    closeModal('loginModal');
+    document.getElementById('adminPanel').classList.remove('admin-hidden');
+    document.getElementById('navBtn').textContent='Admin ✓';
+    updateAdminDash();
+    window.scrollTo(0,document.getElementById('adminPanel').offsetTop-80);
+    return;
+  }
+  const users=JSON.parse(localStorage.getItem('op_users')||'[]');
+  const u=users.find(x=>x.email===email&&x.pass===pass);
+  if(u){
+    closeModal('loginModal');
+    document.getElementById('clientPanel').classList.remove('admin-hidden');
+    document.getElementById('clientWelcome').textContent='Bienvenue, '+u.name.split(' ')[0]+' 👋';
+    document.getElementById('clientRefCode').textContent=u.ref;
+    document.getElementById('navBtn').textContent='Mon compte';
+    window.scrollTo(0,document.getElementById('clientPanel').offsetTop-80);
+  } else {
+    showMsg('loginMsg','Email ou mot de passe incorrect','error');
+  }
+}
+
+function handleSignup(){
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const phone=document.getElementById('signupPhone').value.trim();
+  const country=document.getElementById('signupCountry').value.trim();
+  const pass=document.getElementById('signupPass').value;
+  if(!name||!email||!pass||!country){showMsg('signupMsg','Tous les champs sont requis','error');return}
+  const users=JSON.parse(localStorage.getItem('op_users')||'[]');
+  if(users.find(x=>x.email===email)){showMsg('signupMsg','Email déjà utilisé','error');return}
+  const ref='OMP-'+Math.random().toString(36).substr(2,6).toUpperCase();
+  const u={name,email,phone,country,pass,ref,joined:new Date().toLocaleDateString('fr')};
+  users.push(u);
+  localStorage.setItem('op_users',JSON.stringify(users));
+  showMsg('signupMsg','✅ Compte créé ! Bienvenue sur Omnipay !','success');
+  setTimeout(()=>{
+    closeModal('signupModal');
+    document.getElementById('clientPanel').classList.remove('admin-hidden');
+    document.getElementById('clientWelcome').textContent='Bienvenue, '+name.split(' ')[0]+' 👋';
+    document.getElementById('clientRefCode').textContent=ref;
+    document.getElementById('navBtn').textContent='Mon compte';
+    window.scrollTo(0,document.getElementById('clientPanel').offsetTop-80);
+  },1500);
+}
+
+function updateAdminDash(){
+  const users=JSON.parse(localStorage.getItem('op_users')||'[]');
+  document.getElementById('adminClients').textContent=users.length;
+  const list=document.getElementById('clientsList');
+  if(users.length===0){list.innerHTML='<p style="color:var(--gray);font-size:13px">Aucun client encore — partagez omnipay-eu.com !</p>';return}
+  list.innerHTML=users.map(u=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <div><p style="font-weight:600;font-size:13px">${u.name}</p><p style="color:var(--gray);font-size:11px">${u.email} · ${u.country} · ${u.joined}</p></div>
+      <span class="tag">${u.ref}</span>
+    </div>`).join('');
+}
+
+function logout(){
+  document.getElementById('adminPanel').classList.add('admin-hidden');
+  document.getElementById('clientPanel').classList.add('admin-hidden');
+  document.getElementById('navBtn').textContent='Connexion';
+  window.scrollTo(0,0);
+}
+
+function showMsg(id,text,type){
+  document.getElementById(id).innerHTML=`<div class="msg ${type}">${text}</div>`;
+}
+</script>
+</body>
+</html>
+        
+        
