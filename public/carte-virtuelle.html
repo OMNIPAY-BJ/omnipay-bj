@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartes Virtuelles - OmniPay</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .card-preview {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-top: 30px;
+      text-align: center;
+    }
+    
+    .card-preview p {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+    
+    .card-number {
+      font-size: 24px;
+      letter-spacing: 2px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+    
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💳 Cartes Virtuelles</h1>
+    
+    <div class="message" id="message"></div>
+    
+    <form onsubmit="createCard(e)">
+      <div class="form-group">
+        <label for="cardName">Nom de la carte</label>
+        <input type="text" id="cardName" name="cardName" required placeholder="Ex: Shopping Amazon">
+      </div>
+      
+      <div class="form-group">
+        <label for="dailyLimit">Limite quotidienne (FCFA)</label>
+        <input type="number" id="dailyLimit" name="dailyLimit" value="50000" min="1000">
+      </div>
+      
+      <div class="form-group">
+        <label for="monthlyLimit">Limite mensuelle (FCFA)</label>
+        <input type="number" id="monthlyLimit" name="monthlyLimit" value="1000000" min="10000">
+      </div>
+      
+      <button type="submit" class="btn">Créer une carte virtuelle</button>
+    </form>
+    
+    <div class="card-preview">
+      <p>Aperçu de votre carte</p>
+      <div class="card-number">4111 1111 1111 1111</div>
+      <p>Cette carte permet de faire des achats en ligne 24/7</p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    
+    function showMessage(text, type = 'success') {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      setTimeout(() => msg.className = 'message', 5000);
+    }
+    
+    async function createCard(e) {
+      e.preventDefault();
+      
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        window.location.href = '/auth.html';
+        return;
+      }
+      
+      const cardName = document.getElementById('cardName').value;
+      const dailyLimit = parseInt(document.getElementById('dailyLimit').value);
+      const monthlyLimit = parseInt(document.getElementById('monthlyLimit').value);
+      
+      try {
+        const response = await fetch(`${API_BASE}/cards/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            cardName,
+            dailyLimit,
+            monthlyLimit
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showMessage('Carte créée avec succès!', 'success');
+          document.getElementById('cardName').value = '';
+        } else {
+          showMessage(data.error, 'error');
+        }
+      } catch (error) {
+        showMessage('Erreur lors de la création', 'error');
+      }
+    }
+  </script>
+</body>
+</html>
