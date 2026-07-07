@@ -28,6 +28,18 @@ module.exports = async (req, res) => {
       );
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS virtual_cards (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        card_number VARCHAR(30) NOT NULL,
+        card_name VARCHAR(255),
+        card_type VARCHAR(20) DEFAULT 'Virtual',
+        expiry_date VARCHAR(10),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `;
+
     res.status(200).json({ success: true, message: 'Tables créées avec succès' });
   } catch (error) {
     res.status(500).json({ error: 'Erreur création tables', details: error.message });
