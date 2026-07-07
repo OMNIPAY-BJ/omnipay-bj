@@ -1,4 +1,3 @@
-a
 const { sql } = require('@vercel/postgres');
 
 module.exports = async (req, res) => {
