@@ -24,9 +24,12 @@ module.exports = async (req, res) => {
         description TEXT,
         status VARCHAR(20) DEFAULT 'pending',
         stripe_session_id VARCHAR(255),
+        paydunya_token VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW()
       );
     `;
+
+    await sql`ALTER TABLE transactions ADD COLUMN IF NOT EXISTS paydunya_token VARCHAR(255);`;
 
     await sql`
       CREATE TABLE IF NOT EXISTS virtual_cards (

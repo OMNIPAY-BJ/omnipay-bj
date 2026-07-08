@@ -47,11 +47,12 @@
     async function confirmerPaiement() {
       const params = new URLSearchParams(window.location.search);
       const sessionId = params.get('session_id');
+      const pdToken = params.get('token');
       const icon = document.getElementById('icon');
       const title = document.getElementById('title');
       const message = document.getElementById('message');
 
-      if (!sessionId) {
+      if (!sessionId && !pdToken) {
         icon.textContent = '⚠️';
         title.textContent = 'Session introuvable';
         message.textContent = "Impossible de confirmer le paiement sans identifiant de session.";
@@ -59,7 +60,10 @@
       }
 
       try {
-        const response = await fetch(`/api/payments/confirm?session_id=${sessionId}`);
+        const endpoint = sessionId
+          ? `/api/payments/confirm?session_id=${sessionId}`
+          : `/api/payments/paydunya-confirm?token=${pdToken}`;
+        const response = await fetch(endpoint);
         const data = await response.json();
 
         if (data.success && data.status === 'paid') {
@@ -69,7 +73,7 @@
         } else {
           icon.textContent = '⚠️';
           title.textContent = 'Paiement en attente';
-          message.textContent = "Le paiement n'a pas encore été confirmé par Stripe.";
+          message.textContent = "Le paiement n'a pas encore été confirmé.";
         }
       } catch (error) {
         icon.textContent = '⚠️';
