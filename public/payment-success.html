@@ -37,10 +37,47 @@
 </head>
 <body>
   <div class="box">
-    <div class="icon">✅</div>
-    <h1>Paiement réussi !</h1>
-    <p>Votre transaction a été traitée avec succès via Stripe.</p>
-    <a href="/payer.html">Faire un autre paiement</a>
+    <div class="icon" id="icon">⏳</div>
+    <h1 id="title">Confirmation en cours...</h1>
+    <p id="message">Veuillez patienter pendant que nous confirmons votre paiement.</p>
+    <a href="/dashboard-client.html">Retour au tableau de bord</a>
   </div>
+
+  <script>
+    async function confirmerPaiement() {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      const icon = document.getElementById('icon');
+      const title = document.getElementById('title');
+      const message = document.getElementById('message');
+
+      if (!sessionId) {
+        icon.textContent = '⚠️';
+        title.textContent = 'Session introuvable';
+        message.textContent = "Impossible de confirmer le paiement sans identifiant de session.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/payments/confirm?session_id=${sessionId}`);
+        const data = await response.json();
+
+        if (data.success && data.status === 'paid') {
+          icon.textContent = '✅';
+          title.textContent = 'Paiement réussi !';
+          message.textContent = 'Votre solde a été mis à jour avec succès.';
+        } else {
+          icon.textContent = '⚠️';
+          title.textContent = 'Paiement en attente';
+          message.textContent = "Le paiement n'a pas encore été confirmé par Stripe.";
+        }
+      } catch (error) {
+        icon.textContent = '⚠️';
+        title.textContent = 'Erreur de confirmation';
+        message.textContent = 'Une erreur est survenue lors de la confirmation.';
+      }
+    }
+    confirmerPaiement();
+  </script>
 </body>
 </html>

@@ -76,7 +76,7 @@
 
     <div class="message" id="message"></div>
 
-    <p class="note">Mode TEST — utilisez la carte 4242 4242 4242 4242, n'importe quelle date future, n'importe quel CVC.</p>
+    <p class="note">Paiement sécurisé par carte bancaire réelle.</p>
   </div>
 
   <script>
@@ -86,6 +86,20 @@
       const description = document.getElementById('description').value;
       const msg = document.getElementById('message');
 
+      let userId = null;
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          userId = JSON.parse(userData).id;
+        } catch (e) {}
+      }
+
+      if (!userId) {
+        msg.textContent = 'Veuillez vous connecter avant de payer';
+        msg.className = 'message error';
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Chargement...';
 
@@ -93,7 +107,7 @@
         const response = await fetch('/api/payments/create-checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, description })
+          body: JSON.stringify({ amount, description, userId })
         });
 
         const data = await response.json();
