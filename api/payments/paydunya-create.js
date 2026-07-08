@@ -4,19 +4,11 @@ const BASE_URL = MODE === 'live'
   : 'https://app.paydunya.com/sandbox-api/v1';
 
 function getKeys() {
-  if (MODE === 'live') {
-    return {
-      masterKey: process.env.PAYDUNYA_MASTER_KEY,
-      privateKey: process.env.PAYDUNYA_PRIVATE_KEY_LIVE,
-      publicKey: process.env.PAYDUNYA_PUBLIC_KEY_LIVE,
-      token: process.env.PAYDUNYA_TOKEN_LIVE
-    };
-  }
   return {
     masterKey: process.env.PAYDUNYA_MASTER_KEY,
-    privateKey: process.env.PAYDUNYA_PRIVATE_KEY_TEST,
-    publicKey: process.env.PAYDUNYA_PUBLIC_KEY_TEST,
-    token: process.env.PAYDUNYA_TOKEN_TEST
+    privateKey: process.env.PAYDUNYA_PRIVATE_KEY,
+    publicKey: process.env.PAYDUNYA_PUBLIC_KEY,
+    token: process.env.PAYDUNYA_TOKEN
   };
 }
 
