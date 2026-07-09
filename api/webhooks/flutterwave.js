@@ -1,5 +1,5 @@
 // Webhook Flutterwave - Confirmation des paiements
-// Vérifie la signature HMAC SHA-256 et met à jour le statut des transactions
+// Vérifie le hash de vérification via le header 'verif-hash' et met à jour le statut des transactions
 
 const { sql } = require('@vercel/postgres');
 const crypto = require('crypto');

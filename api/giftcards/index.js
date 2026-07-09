@@ -181,10 +181,18 @@ module.exports = async (req, res) => {
         codes.push(generateGiftCardCode());
       }
 
-      // Déduire le montant du solde et enregistrer la transaction
-      await sql`
-        UPDATE users SET balance = balance - ${totalAmount} WHERE id = ${userId}
+      // Déduire le montant du solde et enregistrer la transaction de façon atomique
+      // Le UPDATE avec WHERE id = ${userId} AND balance >= ${totalAmount} protège contre la race condition
+      const updateResult = await sql`
+        UPDATE users
+        SET balance = balance - ${totalAmount}
+        WHERE id = ${userId} AND balance >= ${totalAmount}
+        RETURNING id
       `;
+
+      if (updateResult.rows.length === 0) {
+        return res.status(400).json({ error: 'Solde insuffisant (vérification atomique échouée)' });
+      }
 
       await sql`
         INSERT INTO transactions (user_id, amount, currency, description, status, gateway, gateway_ref)
@@ -214,9 +222,10 @@ module.exports = async (req, res) => {
 
 /**
  * Génère un code de carte cadeau unique (format: XXXX-XXXX-XXXX-XXXX)
+ * Utilise crypto.randomInt pour un résultat cryptographiquement sécurisé
  */
 function generateGiftCardCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const segment = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const segment = () => Array.from({ length: 4 }, () => chars[require('crypto').randomInt(0, chars.length)]).join('');
   return `${segment()}-${segment()}-${segment()}-${segment()}`;
 }

@@ -105,11 +105,13 @@ module.exports = async (req, res) => {
 
 // --- Fonctions utilitaires ---
 
+const crypto = require('crypto');
+
 function generateCardNumber() {
   // Préfixe Mastercard : 5xxx
   let number = '5';
   for (let i = 0; i < 15; i++) {
-    number += Math.floor(Math.random() * 10);
+    number += crypto.randomInt(0, 10);
   }
   return number.replace(/(.{4})/g, '$1 ').trim();
 }
@@ -122,5 +124,5 @@ function generateExpiryDate() {
 }
 
 function generateCvv() {
-  return String(Math.floor(100 + Math.random() * 900));
+  return String(crypto.randomInt(100, 1000));
 }

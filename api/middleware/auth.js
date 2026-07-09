@@ -1,4 +1,9 @@
-// Middleware d'authentification - vérifie le token ****** Le token est un base64 de {id, email, role} généré lors du login
+// Middleware d'authentification - vérifie le token de session
+//
+// IMPORTANT : Le token actuel utilise un encodage base64 du payload {id, email, role},
+// compatible avec le système d'authentification existant (api/auth/login.js).
+// Ce mécanisme ne protège pas contre la falsification de token.
+// Pour une production renforcée, remplacer par JWT signé (ex: jsonwebtoken avec clé secrète).
 
 /**
  * Décode et valide le token d'authentification
