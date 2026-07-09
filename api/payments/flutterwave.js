@@ -41,7 +41,8 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Configuration Flutterwave incomplète', details: 'FLUTTERWAVE_SECRET_KEY manquante' });
     }
 
-    const txRef = `OMNIPAY-FLW-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const crypto = require('crypto');
+    const txRef = `OMNIPAY-FLW-${Date.now()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
     const protocol = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
     const baseUrl = `${protocol}://${host}`;

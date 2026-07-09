@@ -92,10 +92,19 @@ module.exports = async (req, res) => {
       `;
     }
 
-    if (eventType === 'charge:failed' || eventType === 'charge:delayed') {
+    if (eventType === 'charge:failed') {
       await sql`
         UPDATE transactions
         SET status = 'failed'
+        WHERE gateway_ref = ${chargeCode} AND gateway = 'coinbase'
+      `;
+    }
+
+    if (eventType === 'charge:delayed') {
+      // Paiement reçu mais confirmation réseau retardée — peut encore réussir
+      await sql`
+        UPDATE transactions
+        SET status = 'delayed'
         WHERE gateway_ref = ${chargeCode} AND gateway = 'coinbase'
       `;
     }

@@ -47,7 +47,8 @@ module.exports = async (req, res) => {
     // Paystack attend le montant en kobo/centimes (multiplier par 100)
     const amountInSmallestUnit = Math.round(parseFloat(amount) * 100);
 
-    const reference = `OMNIPAY-PSK-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const crypto = require('crypto');
+    const reference = `OMNIPAY-PSK-${Date.now()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
 
     const payload = {
       email,

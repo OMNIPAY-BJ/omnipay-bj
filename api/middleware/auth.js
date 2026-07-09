@@ -8,7 +8,7 @@
 /**
  * Décode et valide le token d'authentification
  * @param {string} authHeader - Header Authorization (******
- * @returns {{ id, email, role } | null}
+ * @returns {{id: number, email: string, role: string}|null}
  */
 function decodeToken(authHeader) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
