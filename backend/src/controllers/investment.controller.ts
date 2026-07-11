@@ -4,17 +4,19 @@ import { db } from '../db';
 import { investments } from '../db/schema';
 import { AuthenticatedRequest } from '../middlewares/auth';
 
-function decimalStringToCents(value: string): number {
-  const match = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(value);
-  if (!match) return Number.NaN;
-
-  const [, sign, whole, fraction = ''] = match;
-  const cents = Number.parseInt(whole, 10) * 100 + Number.parseInt(fraction.padEnd(2, '0'), 10);
-  return sign === '-' ? -cents : cents;
-}
+const DECIMAL_MONEY_PATTERN = /^(-?)(\d+)(?:\.(\d{1,2}))?$/;
 
 export async function getPortfolio(req: AuthenticatedRequest, res: Response) {
   try {
+    const decimalStringToCents = (value: string): number => {
+      const match = DECIMAL_MONEY_PATTERN.exec(value);
+      if (!match) return Number.NaN;
+
+      const [, sign, whole, fraction = ''] = match;
+      const cents = Number.parseInt(whole, 10) * 100 + Number.parseInt(fraction.padEnd(2, '0'), 10);
+      return sign === '-' ? -cents : cents;
+    };
+
     const userId = req.user?.id;
 
     if (!userId) {

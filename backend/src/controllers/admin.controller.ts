@@ -17,9 +17,9 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
       userId: actor?.id ?? null
     });
 
-    const [{ count: userCount }] = await db.select({ count: sql<number>`count(*)` }).from(users);
+    const [{ count: userCount }] = await db.select({ count: sql<string>`count(*)` }).from(users);
     const [{ count: transactionCount }] = await db
-      .select({ count: sql<number>`count(*)` })
+      .select({ count: sql<string>`count(*)` })
       .from(transactions);
     const recentLogs = await db.select().from(adminLogs).orderBy(desc(adminLogs.timestamp)).limit(10);
 
