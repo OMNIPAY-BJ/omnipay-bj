@@ -1,10 +1,17 @@
 {
   "name": "omnipay-bj",
-  "version": "1.0.0",
-  "description": "OmniPay - Plateforme de paiement pour le Benin",
-  "dependencies": {
-    "stripe": "^14.0.0",
-    "@vercel/postgres": "^0.9.0",
-    "bcryptjs": "^2.4.3"
+  "private": true,
+  "version": "2.0.0",
+  "description": "OMNIPAY - Monorepo fintech (frontend Next.js + backend Express)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace backend & npm run dev --workspace frontend",
+    "check": "npm run check --workspace backend && npm run check --workspace frontend"
+  },
+  "overrides": {
+    "postcss": "8.5.16"
   }
 }
