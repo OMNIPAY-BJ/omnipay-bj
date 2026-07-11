@@ -5,6 +5,8 @@ export function notFound(_req: Request, res: Response) {
 }
 
 export function errorHandler(error: Error, _req: Request, res: Response, _next: NextFunction) {
+  // eslint-disable-next-line no-console
+  console.error('[api-error]', error);
   const message = process.env.NODE_ENV === 'production' ? 'Erreur serveur' : error.message;
   return res.status(500).json({ message });
 }

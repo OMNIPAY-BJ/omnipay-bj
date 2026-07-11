@@ -6,8 +6,14 @@ export interface AuthenticatedRequest extends Request {
   user?: { id: string; role: string };
 }
 
+const BEARER_PREFIX = 'Bearer ';
+
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const authorization = req.headers.authorization;
+  if (!authorization || !authorization.startsWith(BEARER_PREFIX) || authorization.length <= BEARER_PREFIX.length) {
+    return res.status(401).json({ message: 'Token manquant' });
+  }
+  const token = authorization.slice(BEARER_PREFIX.length).trim();
   if (!token) return res.status(401).json({ message: 'Token manquant' });
 
   try {

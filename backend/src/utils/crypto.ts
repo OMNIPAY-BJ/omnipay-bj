@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { env } from '../config/env';
 
 const algorithm = 'aes-256-gcm';
-const key = Buffer.from(env.ENCRYPTION_KEY, 'utf8').subarray(0, 32);
+const key = Buffer.from(env.ENCRYPTION_KEY, 'hex');
 
 export function encryptSensitiveData(plaintext: string): string {
   const iv = crypto.randomBytes(16);

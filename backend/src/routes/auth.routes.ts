@@ -7,7 +7,9 @@ const router = Router();
 router.post(
   '/signup',
   body('email').isEmail(),
-  body('password').isLength({ min: 12 }),
+  body('password')
+    .isLength({ min: 12 })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/),
   body('twoFactorCode').optional().isLength({ min: 6, max: 6 }),
   body('kycReference').optional().isString(),
   signup

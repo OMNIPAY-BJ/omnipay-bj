@@ -6,11 +6,12 @@ import investmentRoutes from './investment.routes';
 import resourcesRoutes from './resources.routes';
 import adminRoutes from './admin.routes';
 import { requireAuth } from '../middlewares/auth';
+import { authLimiter } from '../middlewares/security';
 
 const router = Router();
 
 router.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
-router.use('/auth', authRoutes);
+router.use('/auth', authLimiter, authRoutes);
 router.use('/payments', requireAuth, paymentsRoutes);
 router.use('/ecommerce', requireAuth, ecommerceRoutes);
 router.use('/investment', requireAuth, investmentRoutes);
