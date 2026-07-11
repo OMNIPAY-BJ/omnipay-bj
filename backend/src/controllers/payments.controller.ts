@@ -8,9 +8,13 @@ export async function createTransfer(req: AuthenticatedRequest, res: Response) {
   try {
     const { amount, recipientId } = req.body;
     const userId = req.user?.id;
+    const parsedAmount = Number.parseFloat(String(amount));
 
     if (!userId) {
       return res.status(401).json({ message: 'Utilisateur non authentifié.' });
+    }
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return res.status(400).json({ message: 'Montant invalide.' });
     }
 
     const [transaction] = await db
@@ -18,7 +22,7 @@ export async function createTransfer(req: AuthenticatedRequest, res: Response) {
       .values({
         userId,
         recipientId,
-        amount: Number(amount).toFixed(2),
+        amount: parsedAmount.toFixed(2),
         status: 'queued'
       })
       .returning();

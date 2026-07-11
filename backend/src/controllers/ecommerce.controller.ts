@@ -19,9 +19,13 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
   try {
     const { productId, quantity } = req.body;
     const userId = req.user?.id;
+    const parsedQuantity = Number.parseInt(String(quantity), 10);
 
     if (!userId) {
       return res.status(401).json({ message: 'Utilisateur non authentifié.' });
+    }
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
+      return res.status(400).json({ message: 'Quantité invalide.' });
     }
 
     const product = await db.query.products.findFirst({
@@ -37,7 +41,7 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
       .values({
         userId,
         productId,
-        quantity: Number(quantity),
+        quantity: parsedQuantity,
         status: 'created'
       })
       .returning();
