@@ -31,6 +31,8 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
       recentLogs
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[admin-overview]', error);
     return res.status(500).json({ message: 'Impossible de récupérer la vue administrateur.' });
   }
 }

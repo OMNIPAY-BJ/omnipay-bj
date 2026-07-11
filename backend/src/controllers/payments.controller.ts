@@ -18,13 +18,15 @@ export async function createTransfer(req: AuthenticatedRequest, res: Response) {
       .values({
         userId,
         recipientId,
-        amount: Number(amount),
+        amount: Number(amount).toFixed(2),
         status: 'queued'
       })
       .returning();
 
     return res.status(201).json(transaction);
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[payments-create-transfer]', error);
     return res.status(500).json({ message: 'Impossible de créer le transfert.' });
   }
 }
@@ -45,6 +47,8 @@ export async function listTransactions(req: AuthenticatedRequest, res: Response)
 
     return res.status(200).json({ items, receiptGeneration: 'enabled' });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[payments-list-transactions]', error);
     return res.status(500).json({ message: 'Impossible de récupérer les transactions.' });
   }
 }

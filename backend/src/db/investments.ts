@@ -8,6 +8,6 @@ export const investments = pgTable('investments', {
     .references(() => users.id, { onDelete: 'cascade' }),
   assetName: varchar('asset_name', { length: 255 }).notNull(),
   quantity: integer('quantity').notNull(),
-  purchasePrice: numeric('purchase_price', { precision: 12, scale: 2, mode: 'number' }).notNull(),
+  purchasePrice: numeric('purchase_price', { precision: 12, scale: 2, mode: 'string' }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 });

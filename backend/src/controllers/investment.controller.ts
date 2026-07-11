@@ -13,17 +13,22 @@ export async function getPortfolio(req: AuthenticatedRequest, res: Response) {
     }
 
     const holdings = await db.select().from(investments).where(eq(investments.userId, userId));
-    const totalInvested = holdings.reduce((sum, holding) => sum + holding.quantity * holding.purchasePrice, 0);
+    const totalInvestedCents = holdings.reduce(
+      (sum, holding) => sum + Math.round(Number(holding.purchasePrice) * 100) * holding.quantity,
+      0
+    );
 
     return res.status(200).json({
       holdings,
       analytics: {
         riskLevel: holdings.length > 0 ? 'moderate' : 'low',
         performance: 0,
-        totalInvested
+        totalInvested: totalInvestedCents / 100
       }
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[investment-portfolio]', error);
     return res.status(500).json({ message: 'Impossible de récupérer le portefeuille.' });
   }
 }

@@ -38,6 +38,8 @@ export async function signup(req: Request, res: Response) {
       user: createdUser
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[auth-signup]', error);
     return res.status(500).json({ message: 'Impossible de créer le compte.' });
   }
 }
@@ -73,6 +75,8 @@ export async function login(req: Request, res: Response) {
       }
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[auth-login]', error);
     return res.status(500).json({ message: 'Impossible de se connecter.' });
   }
 }

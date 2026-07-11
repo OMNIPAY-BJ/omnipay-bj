@@ -9,6 +9,8 @@ export async function listProducts(_req: AuthenticatedRequest, res: Response) {
     const items = await db.select().from(products).orderBy(desc(products.createdAt));
     return res.status(200).json({ items, checkout: 'ready', module: 'ecommerce' });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[ecommerce-list-products]', error);
     return res.status(500).json({ message: 'Impossible de récupérer les produits.' });
   }
 }
@@ -42,6 +44,8 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
 
     return res.status(201).json({ status: 'created', order, product });
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('[ecommerce-create-order]', error);
     return res.status(500).json({ message: 'Impossible de créer la commande.' });
   }
 }

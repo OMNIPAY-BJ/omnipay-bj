@@ -6,6 +6,12 @@ import { validateRequest } from '../middlewares/validate';
 const router = Router();
 
 router.get('/transactions', listTransactions);
-router.post('/transfers', body('amount').isNumeric(), body('recipientId').isUUID(), validateRequest, createTransfer);
+router.post(
+  '/transfers',
+  body('amount').isFloat({ min: 0.01 }),
+  body('recipientId').isUUID(),
+  validateRequest,
+  createTransfer
+);
 
 export default router;
