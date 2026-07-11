@@ -8,7 +8,7 @@ export async function createTransfer(req: AuthenticatedRequest, res: Response) {
   try {
     const { amount, recipientId } = req.body;
     const userId = req.user?.id;
-    const parsedAmount = Number.parseFloat(String(amount));
+    const parsedAmount = Number.parseFloat(amount);
 
     if (!userId) {
       return res.status(401).json({ message: 'Utilisateur non authentifié.' });

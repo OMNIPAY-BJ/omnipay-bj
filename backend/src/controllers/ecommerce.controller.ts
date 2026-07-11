@@ -19,7 +19,7 @@ export async function createOrder(req: AuthenticatedRequest, res: Response) {
   try {
     const { productId, quantity } = req.body;
     const userId = req.user?.id;
-    const parsedQuantity = Number.parseInt(String(quantity), 10);
+    const parsedQuantity = Number.parseInt(quantity, 10);
 
     if (!userId) {
       return res.status(401).json({ message: 'Utilisateur non authentifié.' });
