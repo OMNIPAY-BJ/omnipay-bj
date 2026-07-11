@@ -10,7 +10,7 @@
 1. Root Directory: `backend`
 2. Start command: `npm run start`
 3. Build command: `npm run build`
-4. Variables: `MONGODB_URI`, `JWT_SECRET`, `ENCRYPTION_KEY`, `CORS_ORIGIN`
+4. Variables: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`
 
 ## Checklist production
 - HTTPS actif

@@ -3,7 +3,7 @@
 ## Prérequis
 - Node.js 20+
 - npm 10+
-- MongoDB accessible
+- PostgreSQL accessible (ex: Neon)
 
 ## Installation
 ```bash

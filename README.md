@@ -2,7 +2,7 @@
 
 OMNIPAY est une base **production-ready** organisée en deux apps :
 - `frontend/` : Next.js + TypeScript + Tailwind + composants UI type shadcn
-- `backend/` : Node.js + Express + TypeScript + MongoDB + JWT
+- `backend/` : Node.js + Express + TypeScript + PostgreSQL (Neon) + Drizzle ORM + JWT
 
 ## ✅ Modules couverts
 - Authentification (signup/login, 2FA/KYC prêts)

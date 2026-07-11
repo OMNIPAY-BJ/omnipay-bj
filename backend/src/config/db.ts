@@ -1,8 +1,10 @@
-import mongoose from 'mongoose';
-import { env } from './env';
+import { pool } from '../db';
+
+let connectionVerified = false;
 
 export async function connectDatabase(): Promise<void> {
-  await mongoose.connect(env.MONGODB_URI, {
-    sanitizeFilter: true
-  });
+  if (connectionVerified) return;
+
+  await pool.query('select 1');
+  connectionVerified = true;
 }
