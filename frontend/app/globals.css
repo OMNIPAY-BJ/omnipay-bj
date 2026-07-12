@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --omnipay-emerald: #10d6a3;
+  --omnipay-amber: #f6a313;
+  --omnipay-navy: #06111f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply bg-slate-950 text-slate-100;
+  @apply bg-slate-950 text-slate-100 antialiased;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
