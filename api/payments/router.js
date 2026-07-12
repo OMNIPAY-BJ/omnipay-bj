@@ -10,12 +10,12 @@ const { sql } = require('@vercel/postgres');
  */
 const COUNTRY_GATEWAY_MAP = {
   // Afrique de l'Ouest francophone - PayDunya/Flutterwave
-  BJ: ['flutterwave', 'paystack'],    // Bénin
-  CI: ['flutterwave', 'paystack'],    // Côte d'Ivoire
-  SN: ['flutterwave', 'paystack'],    // Sénégal
-  ML: ['flutterwave'],                // Mali
-  BF: ['flutterwave'],                // Burkina Faso
-  TG: ['flutterwave', 'paystack'],    // Togo
+  BJ: ['paydunya', 'flutterwave', 'paystack'], // Bénin
+  CI: ['paydunya', 'flutterwave', 'paystack'], // Côte d'Ivoire
+  SN: ['paydunya', 'flutterwave', 'paystack'], // Sénégal
+  ML: ['paydunya', 'flutterwave'],      // Mali
+  BF: ['paydunya', 'flutterwave'],      // Burkina Faso
+  TG: ['paydunya', 'flutterwave', 'paystack'], // Togo
   GN: ['flutterwave'],                // Guinée
   CM: ['flutterwave'],                // Cameroun
   CD: ['flutterwave'],                // RD Congo
@@ -50,7 +50,7 @@ const COUNTRY_GATEWAY_MAP = {
  * Carte des gateways recommandées par devise
  */
 const CURRENCY_GATEWAY_MAP = {
-  XOF: 'flutterwave',    // Franc CFA BCEAO (Afrique de l'Ouest)
+  XOF: 'paydunya',      // Franc CFA BCEAO (Afrique de l'Ouest)
   XAF: 'flutterwave',    // Franc CFA BEAC (Afrique Centrale)
   NGN: 'paystack',       // Naira nigérian
   GHS: 'paystack',       // Cedi ghanéen
@@ -69,6 +69,7 @@ const CURRENCY_GATEWAY_MAP = {
  * Gateways disponibles et leur configuration
  */
 const AVAILABLE_GATEWAYS = {
+  paydunya:    { envKeys: ['PAYDUNYA_MASTER_KEY', 'PAYDUNYA_PRIVATE_KEY', 'PAYDUNYA_PUBLIC_KEY', 'PAYDUNYA_TOKEN'], endpoint: '/api/payments/paydunya' },
   flutterwave: { envKey: 'FLUTTERWAVE_SECRET_KEY', endpoint: '/api/payments/flutterwave' },
   paystack:    { envKey: 'PAYSTACK_SECRET_KEY',    endpoint: '/api/payments/paystack' },
   coinbase:    { envKey: 'COINBASE_COMMERCE_API_KEY', endpoint: '/api/payments/coinbase' },
@@ -82,7 +83,9 @@ const AVAILABLE_GATEWAYS = {
  */
 function isGatewayAvailable(gateway) {
   const config = AVAILABLE_GATEWAYS[gateway];
-  return config ? !!process.env[config.envKey] : false;
+  if (!config) return false;
+  if (config.envKeys) return config.envKeys.every((key) => !!process.env[key]);
+  return !!process.env[config.envKey];
 }
 
 /**
