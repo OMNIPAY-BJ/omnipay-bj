@@ -1,6 +1,32 @@
+const crypto = require('crypto');
 const { sql } = require('@vercel/postgres');
 
+function getProvidedSecret(req) {
+  const headerSecret = req.headers['x-init-db-secret'];
+  if (Array.isArray(headerSecret)) return headerSecret[0];
+  if (headerSecret) return headerSecret;
+
+  const requestUrl = new URL(req.url || '/', `https://${req.headers.host || 'localhost'}`);
+  return requestUrl.searchParams.get('secret');
+}
+
+function secretsMatch(providedSecret, expectedSecret) {
+  if (!providedSecret || !expectedSecret) return false;
+
+  const provided = Buffer.from(providedSecret);
+  const expected = Buffer.from(expectedSecret);
+
+  return provided.length === expected.length && crypto.timingSafeEqual(provided, expected);
+}
+
 module.exports = async (req, res) => {
+  const expectedSecret = process.env.INIT_DB_SECRET;
+  const providedSecret = getProvidedSecret(req);
+
+  if (!secretsMatch(providedSecret, expectedSecret)) {
+    return res.status(401).json({ error: 'Non autorisé' });
+  }
+
   try {
     await sql`
       CREATE TABLE IF NOT EXISTS users (
