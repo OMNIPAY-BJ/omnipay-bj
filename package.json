@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace backend & npm run dev --workspace frontend",
-    "check": "npm run check --workspace backend && npm run check --workspace frontend"
+    "check": "npm run check --workspace backend && npm run check --workspace frontend",
+    "build": "npm run build --workspace frontend"
   },
   "overrides": {
     "postcss": "8.5.16"
