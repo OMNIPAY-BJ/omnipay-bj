@@ -16,9 +16,11 @@ export default function HomePage() {
           ))}
         </ul>
       </section>
-      <div className="flex gap-3">
-        <Button>Créer un compte</Button>
-        <Button className="bg-slate-700 text-slate-100 hover:bg-slate-600">Connexion sécurisée</Button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button className="w-full sm:w-auto">Créer un compte</Button>
+        <Button className="w-full bg-slate-700 text-slate-100 hover:bg-slate-600 sm:w-auto">
+          Connexion sécurisée
+        </Button>
       </div>
     </main>
   );
