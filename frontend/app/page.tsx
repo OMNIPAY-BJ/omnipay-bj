@@ -1,3 +1,5 @@
+import SignupForm from '../components/SignupForm';
+
 const exchangeRates = [
   '1 EUR = 655.96 FCFA',
   '1 USD = 601.45 FCFA',
@@ -100,21 +102,22 @@ export default function HomePage() {
       </section>
 
       <section id="creer-compte" className="px-5 py-14 sm:px-8 lg:px-14">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.35em] text-amber-300">Thèmes prêts à garder</p>
-            <h2 className="mt-3 text-4xl font-black">Une interface plus attractive, claire et mémorisable.</h2>
+            <p className="text-sm font-black uppercase tracking-[0.35em] text-amber-300">Ouverture de compte</p>
+            <h2 className="mt-3 text-4xl font-black">Créez votre compte et gardez vos accès OmniPay.</h2>
             <p className="mt-4 max-w-2xl text-lg text-slate-300">
-              Les blocs ci-dessous servent de base visuelle réutilisable pour faire évoluer l’app sans casser l’identité OmniPay.
+              Le bouton “Créer mon compte” ouvre maintenant ce formulaire et enregistre le compte via l’API OmniPay.
             </p>
+            <div id="connexion" className="mt-6 grid gap-3">
+              {services.map((service) => (
+                <div key={service} className="rounded-2xl border border-slate-700 bg-slate-900/75 p-4 font-bold text-slate-200">
+                  {service}
+                </div>
+              ))}
+            </div>
           </div>
-          <div id="connexion" className="grid gap-3">
-            {services.map((service) => (
-              <div key={service} className="rounded-2xl border border-slate-700 bg-slate-900/75 p-4 font-bold text-slate-200">
-                {service}
-              </div>
-            ))}
-          </div>
+          <SignupForm />
         </div>
 
         <div className="mx-auto mt-10 grid max-w-6xl gap-5 md:grid-cols-3">
