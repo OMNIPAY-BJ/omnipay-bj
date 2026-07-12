@@ -8,6 +8,48 @@ type Status =
   | { type: 'success'; message: string }
   | { type: 'error'; message: string };
 
+type RegisterPayload = {
+  success?: boolean;
+  token?: string;
+  user?: { role?: string };
+  error?: string;
+  details?: string;
+};
+
+async function parsePayload(response: Response): Promise<RegisterPayload> {
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text().catch(() => '');
+  return {
+    error: text ? `Réponse serveur inattendue (${response.status}).` : `Erreur serveur (${response.status}).`,
+    details: text.slice(0, 160)
+  };
+}
+
+async function registerAccount(body: Record<string, FormDataEntryValue | null>) {
+  const endpoints = ['/api/auth/register', '/api/auth/register.js'];
+  let lastResponse: { response: Response; payload: RegisterPayload } | null = null;
+
+  for (const endpoint of endpoints) {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const payload = await parsePayload(response);
+    lastResponse = { response, payload };
+
+    if (response.ok || response.status !== 404) {
+      return lastResponse;
+    }
+  }
+
+  return lastResponse;
+}
+
 export default function SignupForm() {
   const [status, setStatus] = useState<Status>({ type: 'idle', message: '' });
 
@@ -19,21 +61,23 @@ export default function SignupForm() {
     setStatus({ type: 'loading', message: 'Création du compte en cours...' });
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.get('name'),
-          email: formData.get('email'),
-          phone: formData.get('phone'),
-          password: formData.get('password')
-        })
+      const result = await registerAccount({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        password: formData.get('password')
       });
 
-      const payload = await response.json().catch(() => ({}));
+      if (!result) {
+        setStatus({ type: 'error', message: 'Service inscription indisponible.' });
+        return;
+      }
+
+      const { response, payload } = result;
 
       if (!response.ok) {
-        setStatus({ type: 'error', message: payload.error || 'Impossible de créer le compte.' });
+        const message = payload.error || `Impossible de créer le compte (${response.status}).`;
+        setStatus({ type: 'error', message });
         return;
       }
 
@@ -42,9 +86,10 @@ export default function SignupForm() {
       }
 
       form.reset();
-      setStatus({ type: 'success', message: 'Compte créé avec succès. Vous pouvez maintenant utiliser OmniPay.' });
+      const roleLabel = payload.user?.role === 'pdg' ? ' Compte PDG activé.' : '';
+      setStatus({ type: 'success', message: `Compte créé avec succès.${roleLabel}` });
     } catch (error) {
-      setStatus({ type: 'error', message: 'Connexion impossible. Réessayez dans un instant.' });
+      setStatus({ type: 'error', message: 'Connexion impossible. Vérifiez votre réseau puis réessayez.' });
     }
   }
 
@@ -58,7 +103,7 @@ export default function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl border border-amber-300/30 bg-slate-900/85 p-6 shadow-2xl shadow-black/25">
       <h3 className="text-2xl font-black text-white">Créer votre compte OmniPay</h3>
-      <p className="mt-2 text-sm font-semibold text-slate-300">Remplissez ces informations pour ouvrir votre compte.</p>
+      <p className="mt-2 text-sm font-semibold text-slate-300">Le premier compte créé devient le compte PDG propriétaire.</p>
 
       <div className="mt-6 grid gap-4">
         <label className="grid gap-2 text-sm font-bold text-slate-200">

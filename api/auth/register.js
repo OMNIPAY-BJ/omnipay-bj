@@ -8,9 +8,37 @@ function hashPassword(password) {
   return `${salt}:${hash}`;
 }
 
+function getOwnerEmails() {
+  return [
+    process.env.OMNIPAY_OWNER_EMAIL,
+    process.env.OWNER_EMAIL,
+    'totijulien7@gmail.com'
+  ]
+    .filter(Boolean)
+    .map((email) => String(email).trim().toLowerCase());
+}
+
+async function resolveRole(email) {
+  const ownerEmails = getOwnerEmails();
+  const userCount = await sql`SELECT COUNT(*)::int AS count FROM users`;
+  const ownerCount = await sql`SELECT COUNT(*)::int AS count FROM users WHERE role IN ('pdg', 'owner', 'admin')`;
+  const isFirstUser = Number(userCount.rows[0]?.count || 0) === 0;
+  const hasNoOwner = Number(ownerCount.rows[0]?.count || 0) === 0;
+
+  if ((isFirstUser || ownerEmails.includes(email)) && hasNoOwner) {
+    return 'pdg';
+  }
+
+  return 'client';
+}
+
 module.exports = async (req, res) => {
+  if (req.method === 'GET') {
+    return res.status(200).json({ success: true, service: 'register', methods: ['POST'] });
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', 'GET, POST');
     return res.status(405).json({ error: 'Méthode non autorisée' });
   }
 
@@ -50,9 +78,10 @@ module.exports = async (req, res) => {
       return res.status(409).json({ error: 'Un compte existe déjà avec cet email.' });
     }
 
+    const role = await resolveRole(email);
     const result = await sql`
-      INSERT INTO users (email, password_hash, name, phone)
-      VALUES (${email}, ${hashPassword(password)}, ${name}, ${phone || null})
+      INSERT INTO users (email, password_hash, name, phone, role)
+      VALUES (${email}, ${hashPassword(password)}, ${name}, ${phone || null}, ${role})
       RETURNING id, email, name, phone, role, balance, created_at
     `;
 
