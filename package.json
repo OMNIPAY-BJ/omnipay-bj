@@ -13,5 +13,8 @@
   },
   "overrides": {
     "postcss": "8.5.16"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.10.0"
   }
 }
