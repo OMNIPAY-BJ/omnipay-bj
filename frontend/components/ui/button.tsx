@@ -23,6 +23,8 @@ export function Button(props: ButtonProps) {
     <button
       {...rest}
       className={baseClassName}
-    />
+    >
+      {children}
+    </button>
   );
 }
