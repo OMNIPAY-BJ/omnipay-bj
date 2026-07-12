@@ -10,12 +10,12 @@ const { sql } = require('@vercel/postgres');
  */
 const COUNTRY_GATEWAY_MAP = {
   // Afrique de l'Ouest francophone - PayDunya/Flutterwave
-  BJ: ['flutterwave', 'paystack'],    // Bénin
-  CI: ['flutterwave', 'paystack'],    // Côte d'Ivoire
-  SN: ['flutterwave', 'paystack'],    // Sénégal
-  ML: ['flutterwave'],                // Mali
-  BF: ['flutterwave'],                // Burkina Faso
-  TG: ['flutterwave', 'paystack'],    // Togo
+  BJ: ['paydunya', 'flutterwave', 'paystack'], // Bénin
+  CI: ['paydunya', 'flutterwave', 'paystack'], // Côte d'Ivoire
+  SN: ['paydunya', 'flutterwave', 'paystack'], // Sénégal
+  ML: ['paydunya', 'flutterwave'],      // Mali
+  BF: ['paydunya', 'flutterwave'],      // Burkina Faso
+  TG: ['paydunya', 'flutterwave', 'paystack'], // Togo
   GN: ['flutterwave'],                // Guinée
   CM: ['flutterwave'],                // Cameroun
   CD: ['flutterwave'],                // RD Congo
@@ -38,41 +38,47 @@ const COUNTRY_GATEWAY_MAP = {
   ZM: ['flutterwave'],                // Zambie
   ZW: ['flutterwave'],                // Zimbabwe
 
-  // Reste du monde - Stripe par défaut
-  US: ['stripe'],
-  GB: ['stripe'],
-  FR: ['stripe'],
-  DE: ['stripe'],
-  DEFAULT: ['flutterwave', 'paystack', 'stripe']
+  // Reste du monde - PayPal/Stripe par défaut
+  US: ['paypal', 'stripe'],
+  GB: ['paypal', 'stripe'],
+  FR: ['paypal', 'stripe'],
+  DE: ['paypal', 'stripe'],
+  DEFAULT: ['paydunya', 'flutterwave', 'paystack', 'paypal', 'stripe']
 };
 
 /**
  * Carte des gateways recommandées par devise
  */
 const CURRENCY_GATEWAY_MAP = {
-  XOF: 'flutterwave',    // Franc CFA BCEAO (Afrique de l'Ouest)
+  XOF: 'paydunya',      // Franc CFA BCEAO (Afrique de l'Ouest)
   XAF: 'flutterwave',    // Franc CFA BEAC (Afrique Centrale)
   NGN: 'paystack',       // Naira nigérian
   GHS: 'paystack',       // Cedi ghanéen
   KES: 'paystack',       // Shilling kényan
   ZAR: 'paystack',       // Rand sud-africain
-  USD: 'stripe',         // Dollar américain
-  EUR: 'stripe',         // Euro
-  GBP: 'stripe',         // Livre sterling
-  BTC: 'coinbase',       // Bitcoin
-  ETH: 'coinbase',       // Ethereum
-  USDC: 'coinbase',      // USD Coin
-  DAI: 'coinbase'        // DAI
+  USD: 'paypal',        // Dollar américain
+  EUR: 'paypal',        // Euro
+  GBP: 'paypal',        // Livre sterling
+  BTC: 'coinbase',      // Bitcoin
+  ETH: 'coinbase',      // Ethereum
+  USDT: 'binance',      // Tether via Binance Pay
+  BNB: 'binance',       // BNB via Binance Pay
+  USDC: 'coinbase',     // USD Coin
+  DAI: 'coinbase'       // DAI
 };
 
 /**
  * Gateways disponibles et leur configuration
  */
 const AVAILABLE_GATEWAYS = {
+  paydunya:    { envKeys: ['PAYDUNYA_MASTER_KEY', 'PAYDUNYA_PRIVATE_KEY', 'PAYDUNYA_PUBLIC_KEY', 'PAYDUNYA_TOKEN'], endpoint: '/api/payments/paydunya' },
   flutterwave: { envKey: 'FLUTTERWAVE_SECRET_KEY', endpoint: '/api/payments/flutterwave' },
   paystack:    { envKey: 'PAYSTACK_SECRET_KEY',    endpoint: '/api/payments/paystack' },
   coinbase:    { envKey: 'COINBASE_COMMERCE_API_KEY', endpoint: '/api/payments/coinbase' },
-  stripe:      { envKey: 'STRIPE_SECRET_KEY',      endpoint: '/api/payments/create-checkout' }
+  binance:     { envKeys: ['BINANCE_PAY_API_KEY', 'BINANCE_PAY_SECRET_KEY'], endpoint: '/api/payments/binance' },
+  paypal:      { envKeys: ['PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET'], endpoint: '/api/payments/paypal' },
+  stripe:      { envKey: 'STRIPE_SECRET_KEY',      endpoint: '/api/payments/stripe' },
+  wise:        { envKeys: ['WISE_API_TOKEN', 'WISE_PROFILE_ID'], endpoint: '/api/payments/wise' }
 };
 
 /**
@@ -82,7 +88,9 @@ const AVAILABLE_GATEWAYS = {
  */
 function isGatewayAvailable(gateway) {
   const config = AVAILABLE_GATEWAYS[gateway];
-  return config ? !!process.env[config.envKey] : false;
+  if (!config) return false;
+  if (config.envKeys) return config.envKeys.every((key) => !!process.env[key]);
+  return !!process.env[config.envKey];
 }
 
 /**
@@ -94,9 +102,11 @@ function isGatewayAvailable(gateway) {
  */
 function selectGateway(country, currency, isCrypto = false) {
   // Crypto : toujours Coinbase
-  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'DAI', 'LTC', 'BCH'];
+  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'DAI', 'LTC', 'BCH', 'USDT', 'BNB'];
   if (isCrypto || cryptoCurrencies.includes(currency?.toUpperCase())) {
+    if (['USDT', 'BNB'].includes(currency?.toUpperCase()) && isGatewayAvailable('binance')) return 'binance';
     if (isGatewayAvailable('coinbase')) return 'coinbase';
+    if (isGatewayAvailable('binance')) return 'binance';
   }
 
   // Priorité par devise

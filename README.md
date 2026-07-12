@@ -25,6 +25,41 @@
 
 ---
 
+
+## 🎨 Interface & thèmes
+
+La page d’accueil utilise une direction visuelle inspirée mobile-first : fond sombre premium, vert OmniPay, accents orange, convertisseur visible et messages de confiance.
+
+### Thèmes disponibles
+
+| Thème | Objectif | Usage recommandé |
+|-------|----------|------------------|
+| **Bénin Premium** | Identité locale forte et rassurante | Accueil, onboarding, création de compte |
+| **Diaspora Monde** | Transferts internationaux et conversions | Sections marketing, paiements et devises |
+| **Finance Sécurisée** | Style bancaire professionnel | Connexion, dashboard, opérations sensibles |
+
+### Langues visibles
+
+L’interface met en avant **FR**, **EN** et **PT** pour préparer une expérience Bénin, Afrique, Europe et Monde.
+
+### Où modifier le design
+
+- Page principale : `frontend/app/page.tsx`
+- Styles globaux : `frontend/app/globals.css`
+- Modules affichés : `frontend/lib/modules.ts`
+
+Les couleurs principales sont centralisées dans `frontend/app/globals.css` :
+
+```css
+--omnipay-emerald: #10d6a3;
+--omnipay-amber: #f6a313;
+--omnipay-navy: #06111f;
+```
+
+Pour garder l’interface facile à maintenir, ajouter les nouveaux blocs dans les tableaux `exchangeRates`, `languages`, `themes` ou `services` dans `frontend/app/page.tsx` plutôt que de dupliquer le JSX.
+
+---
+
 ## 🚀 Démarrage rapide
 
 ### Prérequis
