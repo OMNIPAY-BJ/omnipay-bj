@@ -38,12 +38,12 @@ const COUNTRY_GATEWAY_MAP = {
   ZM: ['flutterwave'],                // Zambie
   ZW: ['flutterwave'],                // Zimbabwe
 
-  // Reste du monde - Stripe par défaut
-  US: ['stripe'],
-  GB: ['stripe'],
-  FR: ['stripe'],
-  DE: ['stripe'],
-  DEFAULT: ['flutterwave', 'paystack', 'stripe']
+  // Reste du monde - PayPal/Stripe par défaut
+  US: ['paypal', 'stripe'],
+  GB: ['paypal', 'stripe'],
+  FR: ['paypal', 'stripe'],
+  DE: ['paypal', 'stripe'],
+  DEFAULT: ['paydunya', 'flutterwave', 'paystack', 'paypal', 'stripe']
 };
 
 /**
@@ -56,13 +56,15 @@ const CURRENCY_GATEWAY_MAP = {
   GHS: 'paystack',       // Cedi ghanéen
   KES: 'paystack',       // Shilling kényan
   ZAR: 'paystack',       // Rand sud-africain
-  USD: 'stripe',         // Dollar américain
-  EUR: 'stripe',         // Euro
-  GBP: 'stripe',         // Livre sterling
-  BTC: 'coinbase',       // Bitcoin
-  ETH: 'coinbase',       // Ethereum
-  USDC: 'coinbase',      // USD Coin
-  DAI: 'coinbase'        // DAI
+  USD: 'paypal',        // Dollar américain
+  EUR: 'paypal',        // Euro
+  GBP: 'paypal',        // Livre sterling
+  BTC: 'coinbase',      // Bitcoin
+  ETH: 'coinbase',      // Ethereum
+  USDT: 'binance',      // Tether via Binance Pay
+  BNB: 'binance',       // BNB via Binance Pay
+  USDC: 'coinbase',     // USD Coin
+  DAI: 'coinbase'       // DAI
 };
 
 /**
@@ -73,7 +75,10 @@ const AVAILABLE_GATEWAYS = {
   flutterwave: { envKey: 'FLUTTERWAVE_SECRET_KEY', endpoint: '/api/payments/flutterwave' },
   paystack:    { envKey: 'PAYSTACK_SECRET_KEY',    endpoint: '/api/payments/paystack' },
   coinbase:    { envKey: 'COINBASE_COMMERCE_API_KEY', endpoint: '/api/payments/coinbase' },
-  stripe:      { envKey: 'STRIPE_SECRET_KEY',      endpoint: '/api/payments/create-checkout' }
+  binance:     { envKeys: ['BINANCE_PAY_API_KEY', 'BINANCE_PAY_SECRET_KEY'], endpoint: '/api/payments/binance' },
+  paypal:      { envKeys: ['PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET'], endpoint: '/api/payments/paypal' },
+  stripe:      { envKey: 'STRIPE_SECRET_KEY',      endpoint: '/api/payments/stripe' },
+  wise:        { envKeys: ['WISE_API_TOKEN', 'WISE_PROFILE_ID'], endpoint: '/api/payments/wise' }
 };
 
 /**
@@ -97,9 +102,11 @@ function isGatewayAvailable(gateway) {
  */
 function selectGateway(country, currency, isCrypto = false) {
   // Crypto : toujours Coinbase
-  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'DAI', 'LTC', 'BCH'];
+  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'DAI', 'LTC', 'BCH', 'USDT', 'BNB'];
   if (isCrypto || cryptoCurrencies.includes(currency?.toUpperCase())) {
+    if (['USDT', 'BNB'].includes(currency?.toUpperCase()) && isGatewayAvailable('binance')) return 'binance';
     if (isGatewayAvailable('coinbase')) return 'coinbase';
+    if (isGatewayAvailable('binance')) return 'binance';
   }
 
   // Priorité par devise
