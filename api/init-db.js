@@ -1,6 +1,16 @@
 const { sql } = require('@vercel/postgres');
 
 module.exports = async (req, res) => {
+  const configuredSecret = process.env.INIT_DB_SECRET;
+  const providedSecret = req.headers['x-init-db-secret'] || req.query?.secret;
+
+  if (!configuredSecret) {
+    return res.status(503).json({ error: 'INIT_DB_SECRET non configuré' });
+  }
+  if (providedSecret !== configuredSecret) {
+    return res.status(401).json({ error: 'Secret requis' });
+  }
+
   try {
     await sql`
       CREATE TABLE IF NOT EXISTS users (

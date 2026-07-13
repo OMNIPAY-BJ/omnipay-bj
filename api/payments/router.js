@@ -43,7 +43,7 @@ const COUNTRY_GATEWAY_MAP = {
   GB: ['stripe'],
   FR: ['stripe'],
   DE: ['stripe'],
-  DEFAULT: ['flutterwave', 'paystack', 'stripe']
+  DEFAULT: ['binance', 'flutterwave', 'paystack', 'stripe']
 };
 
 /**
@@ -59,16 +59,19 @@ const CURRENCY_GATEWAY_MAP = {
   USD: 'stripe',         // Dollar américain
   EUR: 'stripe',         // Euro
   GBP: 'stripe',         // Livre sterling
-  BTC: 'coinbase',       // Bitcoin
-  ETH: 'coinbase',       // Ethereum
-  USDC: 'coinbase',      // USD Coin
-  DAI: 'coinbase'        // DAI
+  BTC: 'binance',        // Bitcoin
+  ETH: 'binance',        // Ethereum
+  USDC: 'binance',       // USD Coin
+  USDT: 'binance',       // Tether
+  BNB: 'binance',        // Binance Coin
+  DAI: 'binance'         // DAI
 };
 
 /**
  * Gateways disponibles et leur configuration
  */
 const AVAILABLE_GATEWAYS = {
+  binance:     { envKey: 'BINANCE_API_KEY',        endpoint: '/api/payments/binance' },
   flutterwave: { envKey: 'FLUTTERWAVE_SECRET_KEY', endpoint: '/api/payments/flutterwave' },
   paystack:    { envKey: 'PAYSTACK_SECRET_KEY',    endpoint: '/api/payments/paystack' },
   coinbase:    { envKey: 'COINBASE_COMMERCE_API_KEY', endpoint: '/api/payments/coinbase' },
@@ -81,6 +84,10 @@ const AVAILABLE_GATEWAYS = {
  * @returns {boolean}
  */
 function isGatewayAvailable(gateway) {
+  if (gateway === 'binance') {
+    return Boolean(process.env.BINANCE_API_KEY && process.env.BINANCE_API_SECRET);
+  }
+
   const config = AVAILABLE_GATEWAYS[gateway];
   return config ? !!process.env[config.envKey] : false;
 }
@@ -93,9 +100,10 @@ function isGatewayAvailable(gateway) {
  * @returns {string} Nom de la gateway sélectionnée
  */
 function selectGateway(country, currency, isCrypto = false) {
-  // Crypto : toujours Coinbase
-  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'DAI', 'LTC', 'BCH'];
+  // Crypto : Binance Pay en priorité quand les clés Merchant sont configurées
+  const cryptoCurrencies = ['BTC', 'ETH', 'USDC', 'USDT', 'BNB', 'DAI', 'LTC', 'BCH'];
   if (isCrypto || cryptoCurrencies.includes(currency?.toUpperCase())) {
+    if (isGatewayAvailable('binance')) return 'binance';
     if (isGatewayAvailable('coinbase')) return 'coinbase';
   }
 
